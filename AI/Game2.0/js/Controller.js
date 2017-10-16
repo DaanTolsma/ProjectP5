@@ -15,6 +15,7 @@ var action = {};
 var waypoints = [];
 var time = new THREE.Clock;
 var player = null;
+var damageHandler = new DamageHandler();
 
 var raycaster;
 
@@ -25,6 +26,7 @@ var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement
 var entities = [];
 var objects = [];
 var objectCollisions = new THREE.Group();
+var entitiesGroup = new THREE.Group();
 var loader = new THREE.JSONLoader();
 
 if ( havePointerLock ) {
@@ -105,11 +107,10 @@ function init() {
     scene = new THREE.Scene();
 
     controls = new THREE.PointerLockControls( camera );
-    player = controls.getObject();
-    player.position.x = 20;
-    player.name = "player";
+    player = new Player(controls.getObject(),20,0,1,2.5,100,5,100,800);
     scene.add(objectCollisions);
-    objectCollisions.add(player);
+    scene.add(entitiesGroup);
+    objectCollisions.add(player.getMesh);
     createScene();
     var onKeyDown = function ( event ) {
 
@@ -140,9 +141,8 @@ function init() {
                 break;
 
             case 69: // e
-                addEntity(controls.getObject().position.x,controls.getObject().position.z);
+                addEntity(controls.getObject().position.x,controls.getObject().position.z,200,10,3.5);
                 break;
-
         }
 
     };
@@ -243,6 +243,10 @@ function render() {
     window.onkeydown = function(e) {
         return !(e.keyCode == 32);
     };
+
+    if(!player.isDeath){
+        player.updatePlayer(entitiesGroup,damageHandler,entities);
+    }
     AIMovement();
     renderer.render( scene, camera );
 
@@ -265,15 +269,6 @@ function createScene(){
     light3.position.set(60, 50, 0);
     scene.add( light3 );
 
-    /*
-    var box = new THREE.BoxGeometry(boxsize,boxsize,boxsize);
-    var material = new THREE.MeshPhongMaterial({color: 0x66ff66 });
-    material.shininess = 0.1;
-    target = new THREE.Mesh(box,material);
-    target.position.set(40,5,0);
-    target.name = "player";
-    objectCollisions.add(target);*/
-
     var texture = new THREE.TextureLoader().load("textures/Redcarpet.png");
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
@@ -292,7 +287,7 @@ function createScene(){
     addWall(30,10,10,40,5,-30);
 }
 
-function addEntity(posx,posz){
+function addEntity(posx,posz,health,dmg,range){
     function addCharacter(geometry, materials) {
         materials.forEach( function ( material ) {
             material.skinning = true;
@@ -303,32 +298,34 @@ function addEntity(posx,posz){
         mixer = new THREE.AnimationMixer( mesh );
         action.Idle = mixer.clipAction(geometry.animations[0]);
         action.Run = mixer.clipAction(geometry.animations[1]);
-        onDone(posx,posz);
+        onDone(posx,posz,health,dmg,range);
     }
     loader.load('models/CharacterProject.json', addCharacter);
 }
 
-function onDone(posx,posz){
+function onDone(posx,posz,health,dmg,range){
     entityId++;
-    entities.push(new Entity(1,entityId,10,posx,0,posz,mesh,geo,mixer,true));
-    scene.add(entities[entities.length - 1].getMesh);
+    entities.push(new Entity(1,entityId,10,posx,0,posz,mesh,geo,mixer,health,dmg,range,800));
+    entitiesGroup.add(entities[entities.length - 1].getMesh);
     var elem = document.getElementById('amountOfEntities');
     elem.innerHTML = "Entities: " + entityId;
+    var object = entities[entities.length - 1].getMesh;
+    object.userData = {
+        ID: entityId.toString()
+    }
 }
 
 function AIMovement(){
     var delta = time.getDelta();
     if(entities[0] != null && waypoints[0] != null){
         for(let i = 0; i < entities.length; i++){
-            if(entities[i].inScene){
-                var targetPosition = new THREE.Vector3(player.position.x,0,player.position.z);
-                var currentPosition = new THREE.Vector3(entities[i].getMesh.position.x,0,entities[i].getMesh.position.z);
-                if(currentPosition.distanceTo(targetPosition) > playerCol){
-                    entities[i].updateEntity(delta,objectCollisions,targetPosition,objects);
-                    entities[i].Animation(true);
+            if(entities[i] != null){
+                if(!entities[i].isDeath){
+                    entities[i].updateEntity(delta,objectCollisions,player,objects,damageHandler);
                 }
                 else{
-                    entities[i].Animation(false);
+                    scene.remove(entities[i]);
+                    entitiesGroup.remove(entities[i].getMesh);
                 }
             }
         }

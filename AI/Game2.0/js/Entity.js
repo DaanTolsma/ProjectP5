@@ -1,7 +1,8 @@
 var objectId = null;
 var listwaypoints = [];
+var attack = true;
 class Entity {
-    constructor(size,id,speed,posx,posy,posz,model,geometry,mixer,inscene){
+    constructor(size,id,speed,posx,posy,posz,model,geometry,mixer,health,dmg,range,cooldown){
         this.size = size;
         this.id = id;
         this.speed = speed;
@@ -15,17 +16,65 @@ class Entity {
         this.direction.normalize();
         this.raycaster = new THREE.Raycaster();
         this.checkPlayerRaycaster = new THREE.Raycaster();
-        this.inscene = inscene;
         this.route = [];
         this.routeStart = 0;
         this.calc = false;
         this.endRoute = false;
         this.objectWaypoints = [];
+        this.health = health;
+        this.basedmg = dmg;
+        this.range = range;
+        this.basecooldown = cooldown;
+        this.death = false;
     }
 
     setEntityDirection(direction){
         this.direction = direction;
         this.direction.normalize();
+    }
+
+    setRange(range){
+        this.range = range;
+    }
+
+    Route(route){
+        this.route = route;
+    }
+
+    setHealth(hp){
+        this.health = hp;
+    }
+
+    get getMesh(){
+        return this.mesh;
+    }
+
+    get getHealth(){
+        return this.health;
+    }
+
+    get getRange(){
+        return this.range;
+    }
+
+    get getBasedmg(){
+        return this.basedmg;
+    }
+
+    get getBasecooldown(){
+        return this.basecooldown;
+    }
+    get isDeath(){
+        return this.death;
+    }
+
+    kill(){
+        this.death = true;
+    }
+
+
+    updateSpeed(delta){
+        this.currentSpeed.copy(this.direction).multiplyScalar(delta * this.speed);
     }
 
     Animation(play){
@@ -39,40 +88,39 @@ class Entity {
         }
     }
 
-    Route(route){
-        this.route = route;
-    }
-
-    get getMesh(){
-        return this.mesh;
-    }
-
-    get inScene(){
-        return this.inscene;
-    }
-
-    updateSpeed(delta){
-        this.currentSpeed.copy(this.direction).multiplyScalar(delta * this.speed);
-    }
-
-    updateEntity(delta, oGroup, targetPosition, objectGroup){
-        this.updateSpeed(delta);
-        this.playerCheck(oGroup,targetPosition,objectGroup);
-        if(this.route.length > 0){
-            this.executeRoute(oGroup,targetPosition);
+    updateEntity(delta, oGroup, player, objectGroup,damageHandler){
+        var targetPosition = new THREE.Vector3(player.getMesh.position.x,0,player.getMesh.position.z);
+        var currentPosition = new THREE.Vector3(this.mesh.position.x,0,this.mesh.position.z);
+        if(currentPosition.distanceTo(targetPosition) > playerCol){
+            this.Animation(true);
+            this.updateSpeed(delta);
+            this.playerCheck(oGroup,targetPosition,objectGroup);
+            if(this.route.length > 0){
+                this.executeRoute(oGroup,targetPosition);
+            }
+            else{
+                var targetnegate = new THREE.Vector3().copy(targetPosition);
+                var direction = new THREE.Vector3().copy(this.mesh.position);
+                direction.add(targetnegate.negate());
+                direction.negate();
+                this.setEntityDirection(direction);
+                var matrix = new THREE.Matrix4().lookAt(direction,new THREE.Vector3(0,0,0),new THREE.Vector3(0,1,0));
+                var qt = new THREE.Quaternion().setFromRotationMatrix(matrix);
+                this.mesh.setRotationFromQuaternion(qt);
+            }
+            this.mesh.position.add(this.currentSpeed);
+            this.mixer.update(delta, targetPosition);
         }
         else{
-            var targetnegate = new THREE.Vector3().copy(targetPosition);
-            var direction = new THREE.Vector3().copy(this.mesh.position);
-            direction.add(targetnegate.negate());
-            direction.negate();
-            this.setEntityDirection(direction);
-            var matrix = new THREE.Matrix4().lookAt(direction,new THREE.Vector3(0,0,0),new THREE.Vector3(0,1,0));
-            var qt = new THREE.Quaternion().setFromRotationMatrix(matrix);
-            this.mesh.setRotationFromQuaternion(qt);
+            this.Animation(false);
         }
-        this.mesh.position.add(this.currentSpeed);
-        this.mixer.update(delta, targetPosition);
+        if(currentPosition.distanceTo(targetPosition) <= this.range && attack){
+            damageHandler.dealDamageTo(this,player);
+            attack = false;
+            setTimeout(function(){
+                attack = true;
+            }, this.basecooldown);
+        }
     }
 
     checkObjectCollision(oGroup, targetPosition, objectGroup){
