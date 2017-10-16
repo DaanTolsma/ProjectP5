@@ -328,7 +328,7 @@ function movement(){
 
 function AddDummy(){
     dummyobjects = [
-        new Dummy(100, 0, 10, 0, 1)
+        new Dummy(0, 10, 0, 1)
     ];
 }
 

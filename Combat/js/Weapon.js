@@ -11,7 +11,6 @@ class Weapon{
         this.damage = dmg;
         this.id = id;
         this.mesh.rotation.z += Math.PI / 2;
-        this.raycaster = new THREE.Raycaster();
         this.cooldown = 0;
     }
 
