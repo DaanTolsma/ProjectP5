@@ -1,4 +1,5 @@
 var objectId = null;
+var listwaypoints = [];
 class Entity {
     constructor(size,id,speed,posx,posy,posz,model,geometry,mixer,inscene){
         this.size = size;
@@ -83,6 +84,7 @@ class Entity {
                 if(intersection.name != "player"){
                     var list = objectGroup[parseInt(intersection.userData.ID) - 1].getWaypoints;
                     objectId = parseInt(intersection.userData.ID);
+                    listwaypoints = list;
                     var previousDistance = null;
                     var closestWaypoint = null;
                     var closestObject = null;
@@ -170,6 +172,22 @@ class Entity {
             this.checkDirectLineOfSight(oGroup,targetPosition);
         }
         var waypoint = new THREE.Vector3().copy(this.route[this.routeStart]);
+        var waypointObject = this.objectWaypoints[this.routeStart];
+        if(this.routeStart + 1 < this.objectWaypoints.length){
+            var startIndex = listwaypoints.indexOf(waypointObject);
+            var cornerIndex = startIndex + 2;
+            if(cornerIndex >= listwaypoints.length){
+                cornerIndex = cornerIndex - listwaypoints.length;
+            }
+            var nextInRouteIndex = listwaypoints.indexOf(this.objectWaypoints[this.routeStart + 1]);
+            if(cornerIndex == nextInRouteIndex){
+                this.routeStart = 0;
+                this.route = [];
+                this.calc = false;
+                this.endRoute = false;
+                this.objectWaypoints = [];
+            }
+        }
         if(this.mesh.position.distanceTo(waypoint) <= 1){
             if(this.endRoute){
                 this.routeStart = 0;

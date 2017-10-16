@@ -106,6 +106,7 @@ function init() {
 
     controls = new THREE.PointerLockControls( camera );
     player = controls.getObject();
+    player.position.x = 20;
     player.name = "player";
     scene.add(objectCollisions);
     objectCollisions.add(player);
@@ -356,8 +357,8 @@ function generateWaypoints(){
     if(objects[0] != null){
         for(let i = 0; i < objects.length; i++){
             addWaypoint(objects[i].getMesh.position.x + objects[i].sizeX/2 + 2.5,objects[i].getMesh.position.z + objects[i].sizeZ/2 + 2.5);
-            addWaypoint(objects[i].getMesh.position.x - objects[i].sizeX/2 - 2.5,objects[i].getMesh.position.z - objects[i].sizeZ/2 - 2.5);
             addWaypoint(objects[i].getMesh.position.x + objects[i].sizeX/2 + 2.5,objects[i].getMesh.position.z - objects[i].sizeZ/2 - 2.5);
+            addWaypoint(objects[i].getMesh.position.x - objects[i].sizeX/2 - 2.5,objects[i].getMesh.position.z - objects[i].sizeZ/2 - 2.5);
             addWaypoint(objects[i].getMesh.position.x - objects[i].sizeX/2 - 2.5,objects[i].getMesh.position.z + objects[i].sizeZ/2 + 2.5);
             var objectWaypoints = [waypoints[waypoints.length - 1],waypoints[waypoints.length - 2],waypoints[waypoints.length - 3],waypoints[waypoints.length - 4]];
             objects[i].setWaypoints(objectWaypoints);
