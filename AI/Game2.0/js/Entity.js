@@ -9,7 +9,9 @@ class Entity {
         this.mesh = model;
         this.mixer = mixer;
         this.idle = this.mixer.clipAction(geometry.animations[0]);
-        this.run = this.mixer.clipAction(geometry.animations[1]);
+        this.run = this.mixer.clipAction(geometry.animations[2]);
+        this.punch = this.mixer.clipAction(geometry.animations[1]);
+        this.punch.setLoop(THREE.LoopOnce);
         this.mesh.position.set(posx,posy,posz);
         this.currentSpeed = new THREE.Vector3();
         this.direction = new THREE.Vector3(0,0,0);
@@ -70,6 +72,7 @@ class Entity {
 
     kill(){
         this.death = true;
+        updateEntityCounter();
     }
 
 
@@ -77,22 +80,24 @@ class Entity {
         this.currentSpeed.copy(this.direction).multiplyScalar(delta * this.speed);
     }
 
-    Animation(play){
-        if(play){
-            //this.idle.stop();
+    Animation(type){
+        if(type == "run"){
             this.run.play();
         }
-        else{
+        else if(type == "punch"){
+            this.punch.play();
+        }
+        if(type == "" && this.run.isRunning()){
             this.run.stop();
-            //this.idle.play();
         }
     }
 
     updateEntity(delta, oGroup, player, objectGroup,damageHandler){
         var targetPosition = new THREE.Vector3(player.getMesh.position.x,0,player.getMesh.position.z);
         var currentPosition = new THREE.Vector3(this.mesh.position.x,0,this.mesh.position.z);
+        this.mixer.update(delta, targetPosition);
         if(currentPosition.distanceTo(targetPosition) > playerCol){
-            this.Animation(true);
+            this.Animation("run");
             this.updateSpeed(delta);
             this.playerCheck(oGroup,targetPosition,objectGroup);
             if(this.route.length > 0){
@@ -109,13 +114,15 @@ class Entity {
                 this.mesh.setRotationFromQuaternion(qt);
             }
             this.mesh.position.add(this.currentSpeed);
-            this.mixer.update(delta, targetPosition);
         }
         else{
-            this.Animation(false);
+            this.Animation("");
         }
+
         if(currentPosition.distanceTo(targetPosition) <= this.range && attack){
+            this.punch.reset();
             damageHandler.dealDamageTo(this,player);
+            this.Animation("punch");
             attack = false;
             setTimeout(function(){
                 attack = true;

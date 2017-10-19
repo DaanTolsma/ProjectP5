@@ -7,7 +7,6 @@ class DamageHandler{
         var basedmg = attacker.getBasedmg;
         var finaldmg = basedmg;
         var hpdef = defender.getHealth;
-        console.log(hpdef);
         var newhealth = hpdef - finaldmg;
         if(newhealth <= 0){
             newhealth = 0;

@@ -52,13 +52,17 @@ class Player {
         this.range = range;
     }
 
-    updatePlayer(entitiesGroup,damageHandler,entities){
-        if(Key.isDown(Key.F) && attackAllowed){
+    updatePlayer(entitiesGroup,damageHandler,entities,arms){
+        if(controls.getMouseClick() && attackAllowed){
+            arms.Animation("punch");
             attackAllowed = false;
             setTimeout(function(){
                 attackAllowed = true;
             }, this.basecooldown);
             this.attack(entitiesGroup,damageHandler,entities);
+        }
+        else{
+            controls.setMouseClick(false);
         }
     }
 
