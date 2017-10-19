@@ -2,9 +2,6 @@
  - L O G B O E K -
 ===================
 
-Geschreven door: Daan Tolsma
-
-
 
 18 september: 	De projectgroep werd op deze dag geformeerd (Sjoerd, Sybren en Daan), en het werd al vrij snel duidelijk dat wij een game wilden gaan maken. We hebben vluchtig gepraat over wat voor type games mogelijk waren (qua kennis 			en tijdsbestek).
 22 september: 	Vandaag hebben wij een brainstormsessie gehouden om alle mogelijkheden op een rijtje te zetten, bijvoorbeeld: minigolf, Slender, een first-person shooter game en Skyroad. Uiteindelijk ging onze voorkeur naar een first-			person shooter game. Het concept (verhaal, setting etc.) van de game moest nog bedacht worden.
@@ -12,5 +9,5 @@ Geschreven door: Daan Tolsma
 27 september: 	Bauke is bij het groepje gekomen en heeft ingestemd met ons idee.
 29 september: 	Op deze dag is besloten dat de game zal bestaan uit een bepaald aantal 'waves', d.w.z. rondes die alsmaar moeilijker worden. Ook is er besloten dat de game het beste een minimalistische, maar visueel aantrekkelijke stijl 			gaat krijgen, zodat wij ons beter kunnen focussen op de gameplay. Goede voorbeelden van deze stijl zijn: Unturned, Minecraft, Roblox en Paint The Town Red. Verder heeft het lot bepaald dat Daan de pitch moet gaan doen.
 2 oktober: 	Vandaag was de pitch. De pitch ging goed; de docenten konden lachen om het idee. Wel werd ons het advies gegeven om de game vooral grappig te maken, zodat deze game met een knipoog ontvangen werd en geen agressiviteit uit 		moet stralen.
-9 oktorber:	Dit is de officiële eerste dag van het project. Vandaag is er een Trello board aangemaakt en zijn er taken aangemaakt en verdeeld onder de projectgroep. We hebben besloten om ons vast te houden aan ons concept, maar het 		niet te agressief maken. Ook hadden we het idee om achievements en onderdelen (waar je iets mee kunt maken, zoals een Raspberry Pi) toe te voegen aan de game, mocht er voldoende tijd over zijn.
+9 oktober:	Dit is de officiële eerste dag van het project. Vandaag is er een Trello board aangemaakt en zijn er taken aangemaakt en verdeeld onder de projectgroep. We hebben besloten om ons vast te houden aan ons concept, maar het 		niet te agressief maken. Ook hadden we het idee om achievements en onderdelen (waar je iets mee kunt maken, zoals een Raspberry Pi) toe te voegen aan de game, mocht er voldoende tijd over zijn.
 11 oktober: Sourcetree gelinkt met github om makkelijker te bestanden te kunnen pushen/pullen. dit logboek toegevoegd aan de github repository.
