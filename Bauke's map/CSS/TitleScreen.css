@@ -1,35 +1,43 @@
-*, *:before, *:after {
-  box-sizing: border-box;
-}
-#menu.main {
-  background-image: url('Images/cloud.jpg');
+body {
+  background-image: url('/Images/background.jpg');
+  
 }
 #main {
-  display: none;
   height: 60%;
   overflow: auto;
   margin: auto;
-  position: absolute;
-  top: 0; left: 0; bottom: 0; right: 0;
 }
 #main h1 {
-  color: white;
+  color: #B30D5D;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-align: center;
+  margin-bottom: 10px;
+  font-family: Arial;
+}
+
+#main ul{
+    margin-top: 100px;
+    text-align: center;
+    margin-left: 37%;
+    font-family: Arial;
+    list-style-type: none;
 }
 
 .button {
   display: block;
-  width: 150px;
-  margin: 0 auto;
-  height: 30px;
-  line-height: 30px;
+  text-align: center;
+  width: 250px;
+  margin: 50px;
+  height: 50px;
+  line-height: 50px;
   border: 1px solid #AA2666;
   color: white;
   font-weight: bold;
+  font-size: large;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   background-color: #FB1886;
-  background-image: -webkit-linear-gradient(bottom, #FB1886 0%, #B30D5D 100%);
-  background-image:         linear-gradient(to bottom, #FB1886 0%, #B30D5D 100%);
+  background-image: -webkit-linear-gradient(bottom, #808080 0%, #B30D5D 100%);
+  background-image:         linear-gradient(to bottom, #808080 0%, #B30D5D 100%);
   border-radius: 5px;
 }
 .button:hover {

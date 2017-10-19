@@ -1,7 +1,3 @@
-/**
- * Created by bauke_000 on 11-10-2017.
- */
-
 
 var camera, scene, renderer;
 var geometry, material, mesh;
