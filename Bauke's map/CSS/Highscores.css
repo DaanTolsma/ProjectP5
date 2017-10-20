@@ -4,7 +4,7 @@ body {
 
 table {
     border-collapse: collapse;
-    width: 100%;
+    width: 60%;
 }
 
 th, td {
@@ -20,4 +20,32 @@ tr:nth-child(even){background-color: #f2f2f2}
 th {
     background-color: #4CAF50;
     color: white;
+}
+ul{
+    font-family: Arial;
+    list-style-type: none;
+    position: fixed;
+    margin-top: 38%;
+}
+
+.button {
+  display: block;
+  text-align: center;
+  width: 250px;
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid #AA2666;
+  color: white;
+  font-weight: bold;
+  font-size: large;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: #FB1886;
+  background-image: -webkit-linear-gradient(bottom, #808080 0%, #B30D5D 100%);
+  background-image:         linear-gradient(to bottom, #808080 0%, #B30D5D 100%);
+  border-radius: 5px;
+}
+.button:hover {
+  background-color: #B30D5D;
+  background-image: -webkit-linear-gradient(bottom, #B30D5D 0%, #FB1886 100%);
+  background-image:         linear-gradient(to bottom, #B30D5D 0%, #FB1886 100%);
 }

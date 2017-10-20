@@ -2,7 +2,7 @@ var highscores = [["Daan", 499], ["Bauke", 999999], ["Sjoerd", 500], ["Sybren", 
 
 newHighscore("Bauke", 1000000);
 
-document.write('<table>');
+document.write('<table align="center">');
 document.write('<tr><th>#</th><th>Naam</th><th>Score</th></tr>');
 for (var i in highscores) {
     var place = parseInt(i) + 1;
