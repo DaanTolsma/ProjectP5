@@ -1,11 +1,6 @@
 var highscores = [["Daan", 499], ["Bauke", 999999], ["Sjoerd", 500], ["Sybren", -25]];
 
-var naam = "Jos";
-var score = 0;
-
-highscores.push([naam, score]);
-
-highscores.sort(sortHighscores);
+newHighscore("Bauke", 1000000);
 
 document.write('<table>');
 document.write('<tr><th>#</th><th>Naam</th><th>Score</th></tr>');
@@ -18,8 +13,12 @@ for (var i in highscores) {
     }
     document.write('</tr>');
 }
-
 document.write('</table>');
+
+function newHighscore(name, score) {
+    highscores.push([name, score]);
+    highscores.sort(sortHighscores);
+}
 
 function sortHighscores(a, b) {
     if (a[1] === b[1]) {
