@@ -1,4 +1,4 @@
-class DamageHandler{
+ class DamageHandler{
     constructor(){
 
     }

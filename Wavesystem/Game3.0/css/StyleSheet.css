@@ -56,7 +56,7 @@ body {
     cursor: pointer;
 }
 
-#healthbar {
+#bar {
     position:absolute;
     z-index:5;
     margin-top: 20px;
