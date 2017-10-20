@@ -11,11 +11,14 @@ var playerCol = 2.5;
 var entityId = 0;
 var waypointId = 0;
 var wallId = 0;
-var action = {};
 var waypoints = [];
-var time = new THREE.Clock;
+var timer = new THREE.Clock;
 var player = null;
+var arms = null;
 var damageHandler = new DamageHandler();
+var entitiesCounter = 0;
+var playerCollider = null;
+var testobj = null;
 
 var raycaster;
 
@@ -74,7 +77,6 @@ if ( havePointerLock ) {
     instructions.addEventListener( 'click', function ( event ) {
 
         instructions.style.display = 'none';
-
         // Ask the browser to lock the pointer
         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
         element.requestPointerLock();
@@ -102,19 +104,19 @@ var prevTime = performance.now();
 var velocity = new THREE.Vector3();
 
 function init() {
-
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     scene = new THREE.Scene();
 
     controls = new THREE.PointerLockControls( camera );
-    player = new Player(controls.getObject(),20,0,1,2.5,100,5,100,800);
+    player = new Player(controls.getObject(), 20, 0, 1, 2.5, 100, 5, 100, 800);
+    addArms(0,20);
     scene.add(objectCollisions);
     scene.add(entitiesGroup);
     objectCollisions.add(player.getMesh);
     createScene();
-    var onKeyDown = function ( event ) {
+    var onKeyDown = function (event) {
 
-        switch ( event.keyCode ) {
+        switch (event.keyCode) {
 
             case 38: // up
             case 87: // w
@@ -123,7 +125,8 @@ function init() {
 
             case 37: // left
             case 65: // a
-                moveLeft = true; break;
+                moveLeft = true;
+                break;
 
             case 40: // down
             case 83: // s
@@ -136,17 +139,15 @@ function init() {
                 break;
 
             case 32: // space
-                if ( canJump === true ) velocity.y += 150;
+                if (canJump === true) velocity.y += 150;
                 canJump = false;
                 break;
 
             case 69: // e
-                addEntity(controls.getObject().position.x,controls.getObject().position.z,200,10,3.5);
+                addEntity(controls.getObject().position.x, controls.getObject().position.z, 200, 10, 5.5);
                 break;
         }
-
     };
-
     var onKeyUp = function ( event ) {
 
         switch( event.keyCode ) {
@@ -175,10 +176,7 @@ function init() {
 
     };
 
-    document.addEventListener( 'keydown', onKeyDown, false );
     document.addEventListener( 'keyup', onKeyUp, false );
-
-    raycaster = new THREE.Raycaster();
 
 
 
@@ -191,8 +189,8 @@ function init() {
 
     //
 
+    document.addEventListener( 'keydown', onKeyDown, false );
     window.addEventListener( 'resize', onWindowResize, false );
-
 }
 
 function onWindowResize() {
@@ -207,7 +205,6 @@ function onWindowResize() {
 function render() {
 
     requestAnimationFrame( render );
-
     if ( controlsEnabled ) {
 
         var time = performance.now();
@@ -240,14 +237,17 @@ function render() {
         prevTime = time;
 
     }
+    var deltaTime = timer.getDelta();
     window.onkeydown = function(e) {
         return !(e.keyCode == 32);
     };
-
     if(!player.isDeath){
-        player.updatePlayer(entitiesGroup,damageHandler,entities);
+        if(arms != null){
+            player.updatePlayer(entitiesGroup,damageHandler,entities,arms);
+            arms.updateArms(deltaTime);
+        }
     }
-    AIMovement();
+    AIMovement(deltaTime);
     renderer.render( scene, camera );
 
 }
@@ -281,10 +281,16 @@ function createScene(){
     floor.rotation.x = - Math.PI / 2;
     scene.add(floor);
 
+    var material1 = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+    material1.shininess = 0;
+    testobj = new THREE.Mesh(new THREE.BoxGeometry( 8,
+        8, 8), material1);
+
     //Z is de hoogte!
     addWall(10,30,10,-30,5,0);
     addWall(10,10,30,0,5,0);
     addWall(30,10,10,40,5,-30);
+    addWall(10,30,10,0,5,50);
 }
 
 function addEntity(posx,posz,health,dmg,range){
@@ -296,27 +302,44 @@ function addEntity(posx,posz,health,dmg,range){
         mesh = new THREE.SkinnedMesh(geometry, materials);
         geo = geometry;
         mixer = new THREE.AnimationMixer( mesh );
-        action.Idle = mixer.clipAction(geometry.animations[0]);
-        action.Run = mixer.clipAction(geometry.animations[1]);
         onDone(posx,posz,health,dmg,range);
     }
-    loader.load('models/CharacterProject.json', addCharacter);
+    loader.load('models/CharacterProject1.json', addCharacter);
 }
 
 function onDone(posx,posz,health,dmg,range){
     entityId++;
+    entitiesCounter++;
     entities.push(new Entity(1,entityId,10,posx,0,posz,mesh,geo,mixer,health,dmg,range,800));
     entitiesGroup.add(entities[entities.length - 1].getMesh);
     var elem = document.getElementById('amountOfEntities');
-    elem.innerHTML = "Entities: " + entityId;
+    elem.innerHTML = "Entities: " + entitiesCounter;
     var object = entities[entities.length - 1].getMesh;
     object.userData = {
         ID: entityId.toString()
     }
 }
 
-function AIMovement(){
-    var delta = time.getDelta();
+function addArms(posx,posz){
+    function addArmsMesh(geometry, materials) {
+        materials.forEach( function ( material ) {
+            material.skinning = true;
+            material.shininess = 0.1;
+        } );
+        mesh = new THREE.SkinnedMesh(geometry, materials);
+        geo = geometry;
+        mixer = new THREE.AnimationMixer( mesh );
+        onDoneArms(posx,posz);
+    }
+    loader.load('models/SingleArm.json', addArmsMesh);
+}
+
+function onDoneArms(posx,posz){
+    arms = new Arms(posx,posz,mesh,geo,mixer);
+    scene.add(arms.getMesh);
+}
+
+function AIMovement(delta){
     if(entities[0] != null && waypoints[0] != null){
         for(let i = 0; i < entities.length; i++){
             if(entities[i] != null){
@@ -361,5 +384,15 @@ function generateWaypoints(){
             objects[i].setWaypoints(objectWaypoints);
         }
     }
+}
+
+function updateEntityCounter(){
+    entitiesCounter--;
+    var elem = document.getElementById('amountOfEntities');
+    elem.innerHTML = "Entities: " + entitiesCounter;
+}
+
+function FireEvent(event){
+    console.log(event.button);
 }
 

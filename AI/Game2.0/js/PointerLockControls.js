@@ -6,7 +6,10 @@ THREE.PointerLockControls = function ( camera ) {
 
 	var scope = this;
 
+	var fire = false;
+
 	camera.rotation.set( 0, 0, 0 );
+
 
 	var pitchObject = new THREE.Object3D();
 	pitchObject.add( camera );
@@ -16,14 +19,15 @@ THREE.PointerLockControls = function ( camera ) {
     texture1.wrapS = THREE.RepeatWrapping;
     texture1.wrapT = THREE.RepeatWrapping;
     texture1.repeat.set(1, 1);
-    var material = new THREE.MeshPhongMaterial( { map: texture1 } );
-    material.shininess = 0;
+    var material1 = new THREE.MeshPhongMaterial( { map: texture1 } );
+    material1.shininess = 0;
     var yawObject = new THREE.Mesh(new THREE.BoxGeometry( 3,
-        10, 3), material);
+        10, 3), material1);
     yawObject.position.y = 5;
-	yawObject.add( pitchObject );
+    yawObject.add( pitchObject );
 
 	var PI_2 = Math.PI / 2;
+
 
 	var onMouseMove = function ( event ) {
 
@@ -39,13 +43,23 @@ THREE.PointerLockControls = function ( camera ) {
 
 	};
 
+	var onMouseDown = function (event) {
+		if(event.button == 0 && !fire){
+			fire = true;
+		}
+	}
+
+	this.pitch = pitchObject;
+
 	this.dispose = function() {
 
 		document.removeEventListener( 'mousemove', onMouseMove, false );
+		document.removeEventListener('mousedown', onMouseDown, false);
 
 	};
 
 	document.addEventListener( 'mousemove', onMouseMove, false );
+    document.addEventListener('mousedown', onMouseDown, false);
 
 	this.enabled = false;
 
@@ -54,6 +68,14 @@ THREE.PointerLockControls = function ( camera ) {
 		return yawObject;
 
 	};
+
+	this.getMouseClick = function() {
+		return fire;
+	}
+
+	this.setMouseClick = function(bool) {
+		fire = bool;
+	}
 
 	this.getDirection = function() {
 
