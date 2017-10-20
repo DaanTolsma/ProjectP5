@@ -10,6 +10,8 @@ table {
 th, td {
     text-align: left;
     padding: 8px;
+    font-family: Arial;
+    color: #00ff21;
 }
 
 tr:nth-child(odd){background-color: #ffffff}
