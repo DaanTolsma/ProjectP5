@@ -65,7 +65,6 @@ class Player {
     attack(entitiesGroup,damageHandler,entities){
         var vector = new THREE.Vector3(0, 0, 0);
         var newvector = new THREE.Vector3().copy(controls.getDirection(vector));
-
         this.raycaster.set(this.object.position,newvector);
         var intersections = this.raycaster.intersectObjects(entitiesGroup.children);
         if(intersections.length > 0) {

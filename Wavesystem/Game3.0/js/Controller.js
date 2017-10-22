@@ -23,6 +23,7 @@ var wavespawned = false;
 var entityspawned = false;
 var positx = 22;
 var positz = 1;
+var collision = [];
 
 var raycaster;
 
@@ -257,6 +258,14 @@ function render() {
             entities = [];
             wavespawned = false;
             entityId = 0;
+        }
+        for (var a = 0; a < entities.length; a++) {
+            for (var b = a + 1; b < entities.length; b++) {
+                if(collision){
+                    entities[a].entitycollision(entities[b]);
+                }
+                collision = entities[a].entitycollisionCheck(entities[b]);
+            }
         }
 
         prevTime = time;

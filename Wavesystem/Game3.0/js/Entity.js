@@ -26,6 +26,8 @@ class Entity {
         this.range = range;
         this.basecooldown = cooldown;
         this.death = false;
+        this.box = new THREE.BoxHelper(this.mesh);
+        this.box.update();
     }
 
     setEntityDirection(direction){
@@ -287,5 +289,31 @@ class Entity {
                 this.checkObjectCollision(oGroup, targetPosition, objectGroup);
             }
         }
+    }
+
+    entitycollisionCheck(entity2){
+        var entity1box = this.mesh;
+        var entity2box = entity2.mesh;
+        var entity1bb = new THREE.Box3().setFromObject(entity1box);
+        var entity2bb = new THREE.Box3().setFromObject(entity2box);
+        var collision = entity1bb.isIntersectionBox(entity2bb);
+        if(collision){
+            return true;
+        }
+        return false;
+    }
+
+    entitycollision(entity2){
+        this.raycaster.set(this.mesh.position, this.direction);
+        var intersections = this.raycaster.intersectObjects(entitiesGroup.children);
+        if(intersections.length > 0) {
+            var intersection = intersections[0];
+            if(intersection.distance < 0.5) {
+                this.direction.reflect(intersection.face.normal);
+                this.speed = 0;
+                this.speed = 10;
+            }
+        }
+
     }
 }
