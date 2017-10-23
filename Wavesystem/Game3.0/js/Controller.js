@@ -21,9 +21,11 @@ var wavesize = 0;
 var waveround = 0;
 var wavespawned = false;
 var entityspawned = false;
+var playercollision = false;
 var positx = 22;
 var positz = 1;
 var collision = [];
+var collisionp = [];
 
 var raycaster;
 
@@ -225,11 +227,15 @@ function render() {
 
         velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-        if ( moveForward ) velocity.z -= 400.0 * delta;
-        if ( moveBackward ) velocity.z += 400.0 * delta;
+        if ( moveForward && !playercollision ) velocity.z -= 200.0 * delta;
+        if ( moveForward && playercollision) velocity.z -= 10.0 * delta;
+        if ( moveBackward && !playercollision ) velocity.z += 200.0 * delta;
+        if ( moveBackward && playercollision ) velocity.z += 10.0 * delta;
 
-        if ( moveLeft ) velocity.x -= 400.0 * delta;
-        if ( moveRight ) velocity.x += 400.0 * delta;
+        if ( moveLeft && !playercollision ) velocity.x -= 200.0 * delta;
+        if ( moveLeft && playercollision ) velocity.x -= 10.0 * delta;
+        if ( moveRight && !playercollision ) velocity.x += 200.0 * delta;
+        if ( moveRight && playercollision ) velocity.x += 10.0 * delta;
 
         controls.getObject().translateX( velocity.x * delta );
         controls.getObject().translateY( velocity.y * delta );
@@ -271,6 +277,16 @@ function render() {
                 if(entities[b].isDeath){
                     entities[a].speed = 10;
                 }
+            }
+        }
+
+        for(var i = 0; i < entities.length; i++){
+            collisionp = player.playerCollisionCheck(entities[i]);
+            if(collisionp){
+                playercollision = true;
+            }
+            if(!collisionp){
+                playercollision = false;
             }
         }
 
@@ -433,7 +449,7 @@ function setWavesize(posx, posz){
         var elem = document.getElementById('waveAmount');
         elem.innerHTML = "Wave: " + waveround;
         for (let i = 1; i <= wavesize; i++) {
-            posx = posx + 20;
+            posx = posx + 6;
             posz = posz + 3;
             addEntity(posx, posz, 10, 10, 3.5);
             entityspawned = true;

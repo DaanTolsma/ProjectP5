@@ -12,6 +12,8 @@ class Player {
         this.basecooldown = cooldown;
         this.death = false;
         this.raycaster = new THREE.Raycaster();
+        this.direction = new THREE.Vector3(0,0,0);
+        this.direction.normalize();
     }
 
     get getMesh(){
@@ -76,5 +78,18 @@ class Player {
                 damageHandler.dealDamageTo(this,entity);
             }
         }
+    }
+
+    playerCollisionCheck(entity){
+        var direction = new THREE.Vector3().copy(this.object.position);
+        this.raycaster.set(this.object.position, direction);
+        var intersections = this.raycaster.intersectObjects(entitiesGroup.children);
+        if(intersections.length > 0) {
+            var intersection = intersections[0];
+            if(intersection.distance <= 2) {
+                return true;
+            }
+        }
+        return false;
     }
 }
