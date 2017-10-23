@@ -303,17 +303,28 @@ class Entity {
         return false;
     }
 
+    speedUpdater(){
+        for(var i = 0; i <= 100; i++){
+            if(i == 100) {
+                this.speed = 10;
+            }
+        }
+    }
+
     entitycollision(entity2){
         this.raycaster.set(this.mesh.position, this.direction);
         var intersections = this.raycaster.intersectObjects(entitiesGroup.children);
         if(intersections.length > 0) {
             var intersection = intersections[0];
-            if(intersection.distance < 0.5) {
-                this.direction.reflect(intersection.face.normal);
+            if(intersection.distance < 1) {
                 this.speed = 0;
-                this.speed = 10;
+                this.Animation(false);
             }
         }
 
+    }
+
+    animationCheck(){
+        this.Animation(true);
     }
 }

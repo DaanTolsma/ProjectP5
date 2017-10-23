@@ -259,12 +259,18 @@ function render() {
             wavespawned = false;
             entityId = 0;
         }
-        for (var a = 0; a < entities.length; a++) {
-            for (var b = a + 1; b < entities.length; b++) {
+        for(var a = 0; a < entities.length; a++) {
+            for(var b = a + 1; b < entities.length; b++) {
+                collision = entities[a].entitycollisionCheck(entities[b]);
                 if(collision){
                     entities[a].entitycollision(entities[b]);
                 }
-                collision = entities[a].entitycollisionCheck(entities[b]);
+                if(entities[a].isDeath){
+                    entities[b].speed = 10;
+                }
+                if(entities[b].isDeath){
+                    entities[a].speed = 10;
+                }
             }
         }
 
@@ -280,6 +286,7 @@ function render() {
     }
 
     AIMovement();
+    updateSpeed();
 
     if(entities.length == wavesize){
         entityspawned = false;
@@ -380,6 +387,15 @@ function AIMovement(){
     }
 }
 
+function updateSpeed(){
+    for(var a = 0; a < entities.length; a++){
+        entities[a].speedUpdater();
+    }
+    if(this.speed > 0){
+        this.animationCheck();
+    }
+}
+
 function addWaypoint(posx,posz){
     waypointId++;
     waypoints.push(new Waypoint(posx,posz,waypointId));
@@ -417,11 +433,9 @@ function setWavesize(posx, posz){
         var elem = document.getElementById('waveAmount');
         elem.innerHTML = "Wave: " + waveround;
         for (let i = 1; i <= wavesize; i++) {
-            posx = posx + 6;
+            posx = posx + 20;
             posz = posz + 3;
             addEntity(posx, posz, 10, 10, 3.5);
-            setTimeout(function () {
-            }, 2000);
             entityspawned = true;
         }
     }
