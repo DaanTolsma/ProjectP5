@@ -1,4 +1,4 @@
-/**
+/**deels
  * @author mrdoob / http://mrdoob.com/
  */
 
@@ -22,7 +22,7 @@ THREE.PointerLockControls = function ( camera ) {
     var material1 = new THREE.MeshPhongMaterial( { map: texture1 } );
     material1.shininess = 0;
     var yawObject = new THREE.Mesh(new THREE.BoxGeometry( 3,
-        10, 3), material1);
+        30, 3), material1);
     yawObject.position.y = 5;
     yawObject.add( pitchObject );
 

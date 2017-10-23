@@ -15,12 +15,12 @@ var waypoints = [];
 var timer = new THREE.Clock;
 var player = null;
 var arms = null;
+var testobj = null;
 var damageHandler = new DamageHandler();
 var entitiesCounter = 0;
-var playerCollider = null;
-var testobj = null;
-
-var raycaster;
+var modelsReady = false;
+var weapons = [];
+var weaponId = 0;
 
 var blocker = document.getElementById( 'blocker' );
 var instructions = document.getElementById( 'instructions' );
@@ -30,6 +30,7 @@ var entities = [];
 var objects = [];
 var objectCollisions = new THREE.Group();
 var entitiesGroup = new THREE.Group();
+var weaponsGroup = new THREE.Group();
 var loader = new THREE.JSONLoader();
 
 if ( havePointerLock ) {
@@ -108,12 +109,13 @@ function init() {
     scene = new THREE.Scene();
 
     controls = new THREE.PointerLockControls( camera );
-    player = new Player(controls.getObject(), 20, 0, 1, 2.5, 100, 5, 100, 800);
-    addArms(0,20);
+    player = new Player(controls.getObject(), 20, 0, 1, 2.5, 100, 6, 20, 800,4,4);
+    createScene();
+    instantiateModels();
     scene.add(objectCollisions);
     scene.add(entitiesGroup);
+    scene.add(weaponsGroup);
     objectCollisions.add(player.getMesh);
-    createScene();
     var onKeyDown = function (event) {
 
         switch (event.keyCode) {
@@ -144,7 +146,7 @@ function init() {
                 break;
 
             case 69: // e
-                addEntity(controls.getObject().position.x, controls.getObject().position.z, 200, 10, 5.5);
+                addEntity(controls.getObject().position.x, controls.getObject().position.z, 200, 10, 3.5);
                 break;
         }
     };
@@ -205,6 +207,12 @@ function onWindowResize() {
 function render() {
 
     requestAnimationFrame( render );
+
+    if(modelsReady){
+        addArms(0,20);
+        modelsReady = false;
+    }
+
     if ( controlsEnabled ) {
 
         var time = performance.now();
@@ -283,8 +291,8 @@ function createScene(){
 
     var material1 = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
     material1.shininess = 0;
-    testobj = new THREE.Mesh(new THREE.BoxGeometry( 8,
-        8, 8), material1);
+    testobj = new THREE.Mesh(new THREE.BoxGeometry( 0.5,
+        20, 0.5), material1);
 
     //Z is de hoogte!
     addWall(10,30,10,-30,5,0);
@@ -317,7 +325,7 @@ function onDone(posx,posz,health,dmg,range){
     var object = entities[entities.length - 1].getMesh;
     object.userData = {
         ID: entityId.toString()
-    }
+    };
 }
 
 function addArms(posx,posz){
@@ -329,13 +337,14 @@ function addArms(posx,posz){
         mesh = new THREE.SkinnedMesh(geometry, materials);
         geo = geometry;
         mixer = new THREE.AnimationMixer( mesh );
-        onDoneArms(posx,posz);
+        var bone = mesh.children[0].children[0].children[0];
+        onDoneArms(posx,posz,bone);
     }
-    loader.load('models/SingleArm.json', addArmsMesh);
+    loader.load('models/SingleArm1.json', addArmsMesh);
 }
 
-function onDoneArms(posx,posz){
-    arms = new Arms(posx,posz,mesh,geo,mixer);
+function onDoneArms(posx,posz,bone){
+    arms = new Arms(posx,posz,mesh,geo,mixer,bone);
     scene.add(arms.getMesh);
 }
 
@@ -370,7 +379,7 @@ function addWall(sizex,sizez,sizey,posx,posy,posz){
     var object = objects[objects.length - 1].getMesh;
     object.userData = {
         ID: wallId.toString()
-    }
+    };
 }
 
 function generateWaypoints(){
@@ -392,7 +401,31 @@ function updateEntityCounter(){
     elem.innerHTML = "Entities: " + entitiesCounter;
 }
 
-function FireEvent(event){
-    console.log(event.button);
+function addBook(){
+    function addBookMesh(geometry, materials) {
+        materials.forEach( function ( material ) {
+            material.skinning = true;
+            material.shininess = 0.1;
+        } );
+        mesh = new THREE.Mesh(geometry, materials);
+        onDoneBook();
+    }
+    loader.load('models/Book.json', addBookMesh);
+}
+
+function onDoneBook(){
+    weaponId++;
+    weapons.push(new Weapon(15,20,0.2,0,0.5,mesh,"Mathematics Book"));
+    var obj = weapons[weapons.length - 1].getMesh;
+    obj.userData = {
+        ID: weaponId.toString()
+    };
+    obj.position.set(30,1,0);
+    weaponsGroup.add(obj);
+    modelsReady = true;
+}
+
+function instantiateModels(){
+    addBook();
 }
 

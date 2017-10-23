@@ -1,6 +1,7 @@
 var attackAllowed = true;
+var elem = document.getElementById( 'pickup' );
 class Player {
-    constructor(object,posx,posz,id,size,health,range,dmg,cooldown){
+    constructor(object,posx,posz,id,size,health,range,dmg,cooldown,pickuprange,knockback){
         this.object = object;
         this.id = id;
         this.size = size;
@@ -12,6 +13,9 @@ class Player {
         this.basecooldown = cooldown;
         this.death = false;
         this.raycaster = new THREE.Raycaster();
+        this.weapon = null;
+        this.pickupRange = pickuprange;
+        this.baseknockback = knockback;
     }
 
     get getMesh(){
@@ -38,6 +42,18 @@ class Player {
         return this.death;
     }
 
+    get getWeapon(){
+        return this.weapon;
+    }
+
+    setWeapon(weapon){
+        this.weapon = weapon;
+    }
+
+    get getKnockback(){
+        return this.baseknockback;
+    }
+
     kill(){
         this.death = true;
     }
@@ -48,27 +64,42 @@ class Player {
         health.value = this.health;
     }
 
-    setRange(range){
-        this.range = range;
-    }
-
     updatePlayer(entitiesGroup,damageHandler,entities,arms){
         if(controls.getMouseClick() && attackAllowed){
-            arms.Animation("punch");
+            var cooldown = this.basecooldown;
+            if(this.weapon == null){
+                arms.Animation("punch");
+            }
+            else{
+                arms.Animation("weapon");
+                cooldown += this.weapon.getSpeed;
+            }
             attackAllowed = false;
             setTimeout(function(){
                 attackAllowed = true;
-            }, this.basecooldown);
+            }, cooldown);
             this.attack(entitiesGroup,damageHandler,entities);
         }
         else{
             controls.setMouseClick(false);
         }
+
+        if(this.weapon != null){
+            if(this.weapon.isDestroyed){
+                arms.removeWeapon(this.weapon.getMesh);
+                scene.remove(this.weapon);
+                weaponsGroup.remove(this.weapon.getMesh);
+                this.weapon = null;
+            }
+        }
+
+        this.checkPickupWeapon();
     }
 
     attack(entitiesGroup,damageHandler,entities){
         var vector = new THREE.Vector3(0, 0, 0);
         var newvector = new THREE.Vector3().copy(controls.getDirection(vector));
+        var rangeModifier = 0;
 
         this.raycaster.set(this.object.position,newvector);
         var intersections = this.raycaster.intersectObjects(entitiesGroup.children);
@@ -77,9 +108,42 @@ class Player {
             var entity = entities[parseInt(intersection.userData.ID) - 1];
             var entpos = new THREE.Vector3(intersection.position.x,0,intersection.position.z);
             var thispos = new THREE.Vector3(this.object.position.x,0,this.object.position.z);
-            if(thispos.distanceTo(entpos) <= this.range){
+            if(this.weapon != null){
+                rangeModifier = this.weapon.getRange;
+            }
+            if(thispos.distanceTo(entpos) <= this.range + rangeModifier){
                 damageHandler.dealDamageTo(this,entity);
             }
+        }
+    }
+
+    checkPickupWeapon(){
+        var vector = new THREE.Vector3(0, 0, 0);
+        var newvector = new THREE.Vector3().copy(controls.getDirection(vector));
+
+        this.raycaster.set(this.object.position,newvector);
+        var intersections = this.raycaster.intersectObjects(weaponsGroup.children);
+        if(intersections.length > 0) {
+            var intersection = intersections[0].object;
+            var weaponpos = new THREE.Vector3(intersection.position.x,0,intersection.position.z);
+            var thispos = new THREE.Vector3(this.object.position.x,0,this.object.position.z);
+            if(thispos.distanceTo(weaponpos) <= this.pickupRange){
+                elem.innerHTML = "[Q]Pickup: " + weapons[parseInt(intersection.userData.ID) - 1].name;
+                if(Key.isDown(Key.Q)){
+                    this.weapon = weapons[parseInt(intersection.userData.ID) - 1];
+                    scene.remove(weapons[parseInt(intersection.userData.ID) - 1]);
+                    weaponsGroup.remove(weapons[parseInt(intersection.userData.ID) - 1].getMesh);
+                    this.weapon.getMesh.position.set(arms.bone.position.x,arms.bone.position.y,arms.bone.position.z);
+                    this.weapon.getMesh.translateZ(1.5);
+                    arms.showWeapon(this.weapon.getMesh);
+                }
+            }
+            else{
+                elem.innerHTML = "";
+            }
+        }
+        else{
+            elem.innerHTML = "";
         }
     }
 }

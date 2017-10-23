@@ -1,6 +1,7 @@
 var objectId = null;
 var listwaypoints = [];
 var attack = true;
+var knockbackSpeed = 0.5;
 class Entity {
     constructor(size,id,speed,posx,posy,posz,model,geometry,mixer,health,dmg,range,cooldown){
         this.size = size;
@@ -28,6 +29,7 @@ class Entity {
         this.range = range;
         this.basecooldown = cooldown;
         this.death = false;
+        this.applyKnockback = 0;
     }
 
     setEntityDirection(direction){
@@ -45,6 +47,10 @@ class Entity {
 
     setHealth(hp){
         this.health = hp;
+    }
+
+    setKnockback(value){
+        this.applyKnockback = value;
     }
 
     get getMesh(){
@@ -96,27 +102,36 @@ class Entity {
         var targetPosition = new THREE.Vector3(player.getMesh.position.x,0,player.getMesh.position.z);
         var currentPosition = new THREE.Vector3(this.mesh.position.x,0,this.mesh.position.z);
         this.mixer.update(delta, targetPosition);
-        if(currentPosition.distanceTo(targetPosition) > playerCol){
-            this.Animation("run");
-            this.updateSpeed(delta);
-            this.playerCheck(oGroup,targetPosition,objectGroup);
-            if(this.route.length > 0){
-                this.executeRoute(oGroup,targetPosition);
+
+        if(this.applyKnockback > 0){
+            this.mesh.translateZ(-knockbackSpeed);
+            this.applyKnockback -= knockbackSpeed;
+            console.log(this.applyKnockback);
+        }
+
+        if(this.applyKnockback <= 0){
+            if(currentPosition.distanceTo(targetPosition) > playerCol){
+                this.Animation("run");
+                this.updateSpeed(delta);
+                this.playerCheck(oGroup,targetPosition,objectGroup);
+                if(this.route.length > 0){
+                    this.executeRoute(oGroup,targetPosition);
+                }
+                else{
+                    var targetnegate = new THREE.Vector3().copy(targetPosition);
+                    var direction = new THREE.Vector3().copy(this.mesh.position);
+                    direction.add(targetnegate.negate());
+                    direction.negate();
+                    this.setEntityDirection(direction);
+                    var matrix = new THREE.Matrix4().lookAt(direction,new THREE.Vector3(0,0,0),new THREE.Vector3(0,1,0));
+                    var qt = new THREE.Quaternion().setFromRotationMatrix(matrix);
+                    this.mesh.setRotationFromQuaternion(qt);
+                }
+                this.mesh.position.add(this.currentSpeed);
             }
             else{
-                var targetnegate = new THREE.Vector3().copy(targetPosition);
-                var direction = new THREE.Vector3().copy(this.mesh.position);
-                direction.add(targetnegate.negate());
-                direction.negate();
-                this.setEntityDirection(direction);
-                var matrix = new THREE.Matrix4().lookAt(direction,new THREE.Vector3(0,0,0),new THREE.Vector3(0,1,0));
-                var qt = new THREE.Quaternion().setFromRotationMatrix(matrix);
-                this.mesh.setRotationFromQuaternion(qt);
+                this.Animation("");
             }
-            this.mesh.position.add(this.currentSpeed);
-        }
-        else{
-            this.Animation("");
         }
 
         if(currentPosition.distanceTo(targetPosition) <= this.range && attack){
