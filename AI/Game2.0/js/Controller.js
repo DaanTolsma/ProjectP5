@@ -109,7 +109,7 @@ function init() {
     scene = new THREE.Scene();
 
     controls = new THREE.PointerLockControls( camera );
-    player = new Player(controls.getObject(), 20, 0, 1, 2.5, 100, 6, 20, 800,4,4);
+    player = new Player(controls.getObject(), 20, 10, 1, 2.5, 100, 6, 20, 800,4,4);
     createScene();
     instantiateModels();
     scene.add(objectCollisions);
@@ -256,6 +256,9 @@ function render() {
         }
     }
     AIMovement(deltaTime);
+    for(let i = 0; i < weapons.length; i++){
+        weapons[i].updateWeapon();
+    }
     renderer.render( scene, camera );
 
 }
@@ -415,7 +418,7 @@ function addBook(){
 
 function onDoneBook(){
     weaponId++;
-    weapons.push(new Weapon(15,20,0.2,0,0.5,mesh,"Mathematics Book"));
+    weapons.push(new Weapon(15,20,0.2,0,0.5,mesh,"Mathematics Book",60000));
     var obj = weapons[weapons.length - 1].getMesh;
     obj.userData = {
         ID: weaponId.toString()
@@ -425,7 +428,32 @@ function onDoneBook(){
     modelsReady = true;
 }
 
+function addMonitor(){
+    function addMonitorMesh(geometry, materials) {
+        materials.forEach( function ( material ) {
+            material.skinning = true;
+            material.shininess = 0.1;
+        } );
+        mesh = new THREE.Mesh(geometry, materials);
+        onDoneMonitor();
+    }
+    loader.load('models/Monitor.json', addMonitorMesh);
+}
+
+function onDoneMonitor(){
+    weaponId++;
+    weapons.push(new Weapon(40,20,0.4,300,1.4,mesh,"Monitor",60000));
+    var obj = weapons[weapons.length - 1].getMesh;
+    obj.userData = {
+        ID: weaponId.toString()
+    };
+    obj.position.set(25,1,0);
+    weaponsGroup.add(obj);
+    modelsReady = true;
+}
+
 function instantiateModels(){
     addBook();
+    addMonitor();
 }
 

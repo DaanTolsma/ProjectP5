@@ -20,6 +20,7 @@ var Key = {
     DOWN: 40,
     AL: 37,
     AR: 39,
+    G: 71,
 
     isDown: function(keyCode) {
         return this._pressed[keyCode];

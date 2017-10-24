@@ -1,5 +1,7 @@
 var attackAllowed = true;
+var countG = 0;
 var elem = document.getElementById( 'pickup' );
+
 class Player {
     constructor(object,posx,posz,id,size,health,range,dmg,cooldown,pickuprange,knockback){
         this.object = object;
@@ -91,6 +93,18 @@ class Player {
                 weaponsGroup.remove(this.weapon.getMesh);
                 this.weapon = null;
             }
+
+            if(Key.isDown(Key.G)){
+                countG++;
+                var drop = this.weapon;
+                arms.removeWeapon(this.weapon.getMesh);
+                scene.remove(this.weapon);
+                weaponsGroup.remove(this.weapon.getMesh);
+                this.weapon = null;
+                drop.getMesh.position.set(this.object.position.x,1,this.object.position.z);
+                weaponsGroup.add(drop.getMesh);
+                drop.setDecay(true,countG);
+            }
         }
 
         this.checkPickupWeapon();
@@ -130,12 +144,25 @@ class Player {
             if(thispos.distanceTo(weaponpos) <= this.pickupRange){
                 elem.innerHTML = "[Q]Pickup: " + weapons[parseInt(intersection.userData.ID) - 1].name;
                 if(Key.isDown(Key.Q)){
+                    if(this.weapon != null){
+                        var drop = this.weapon;
+                        arms.removeWeapon(this.weapon.getMesh);
+                        scene.remove(this.weapon);
+                        weaponsGroup.remove(this.weapon.getMesh);
+                        this.weapon = null;
+                        drop.getMesh.position.set(this.object.position.x,1,this.object.position.z);
+                        weaponsGroup.add(drop.getMesh);
+                        drop.setDecay(true,-1);
+                    }
                     this.weapon = weapons[parseInt(intersection.userData.ID) - 1];
                     scene.remove(weapons[parseInt(intersection.userData.ID) - 1]);
                     weaponsGroup.remove(weapons[parseInt(intersection.userData.ID) - 1].getMesh);
                     this.weapon.getMesh.position.set(arms.bone.position.x,arms.bone.position.y,arms.bone.position.z);
                     this.weapon.getMesh.translateZ(1.5);
                     arms.showWeapon(this.weapon.getMesh);
+                    if(this.weapon.isDropped){
+                        this.weapon.isDropped = false;
+                    }
                 }
             }
             else{
