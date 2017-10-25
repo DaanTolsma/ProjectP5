@@ -1,6 +1,7 @@
 var attackAllowed = true;
 var countG = 0;
 var elem = document.getElementById( 'pickup' );
+var framecounter = 0;
 
 class Player {
     constructor(object,posx,posz,id,size,health,range,dmg,cooldown,pickuprange,knockback){
@@ -67,6 +68,7 @@ class Player {
     }
 
     updatePlayer(entitiesGroup,damageHandler,entities,arms){
+        framecounter++;
         if(controls.getMouseClick() && attackAllowed){
             var cooldown = this.basecooldown;
             if(this.weapon == null){
@@ -139,11 +141,11 @@ class Player {
         var intersections = this.raycaster.intersectObjects(weaponsGroup.children);
         if(intersections.length > 0) {
             var intersection = intersections[0].object;
-            var weaponpos = new THREE.Vector3(intersection.position.x,0,intersection.position.z);
+            var weaponpos = new THREE.Vector3(intersection.position.x,intersection.position.y,intersection.position.z);
             var thispos = new THREE.Vector3(this.object.position.x,0,this.object.position.z);
             if(thispos.distanceTo(weaponpos) <= this.pickupRange){
                 elem.innerHTML = "[Q]Pickup: " + weapons[parseInt(intersection.userData.ID) - 1].name;
-                if(Key.isDown(Key.Q)){
+                if(Key.isDown(Key.Q) && framecounter > 5){
                     if(this.weapon != null){
                         var drop = this.weapon;
                         arms.removeWeapon(this.weapon.getMesh);
@@ -163,6 +165,12 @@ class Player {
                     if(this.weapon.isDropped){
                         this.weapon.isDropped = false;
                     }
+                    for(let i = 0; i < weaponSpawnpoints.length; i++){
+                        if(weaponpos.equals(weaponSpawnpoints[i].getPos)){
+                            weaponSpawnpoints[i].setWeapon(null);
+                        }
+                    }
+                    framecounter = 0;
                 }
             }
             else{

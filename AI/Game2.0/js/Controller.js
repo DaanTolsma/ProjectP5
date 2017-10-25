@@ -21,6 +21,10 @@ var entitiesCounter = 0;
 var modelsReady = false;
 var weapons = [];
 var weaponId = 0;
+var weaponPaths = ['models/Book.json','models/Monitor.json','models/Keyboard.json','models/Pointer.json'];
+var weaponSpawnpoints = [new WeaponSpawnpoint(25,1,0,30000),new WeaponSpawnpoint(30,1,0,30000),new WeaponSpawnpoint(35,1,0,30000)];
+var weaponMeshes = [];
+var meshcounter = 0;
 
 var blocker = document.getElementById( 'blocker' );
 var instructions = document.getElementById( 'instructions' );
@@ -91,7 +95,10 @@ if ( havePointerLock ) {
 }
 
 init();
-render();
+
+setTimeout(function(){
+    render();
+}, 1000);
 
 var controlsEnabled = false;
 
@@ -256,8 +263,23 @@ function render() {
         }
     }
     AIMovement(deltaTime);
+    if(weaponMeshes.length > 0){
+        for(let i = 0; i < weaponSpawnpoints.length; i++){
+            if(weaponSpawnpoints[i].getWeapon == null && weaponSpawnpoints[i].isAllowed){
+                console.log(weaponMeshes);
+                var num = Math.floor((Math.random() * ((weaponMeshes.length - 1) - 0)) + 0);
+                var mod = weaponMeshes[num];
+                addNewWeapon(mod.userData.DMG,mod.userData.DUR,mod.userData.RANGE,mod.userData.SPEED,mod.userData.KB,
+                    mod.userData.NAME,mod.userData.DECAY,mod.userData.MESH,weaponSpawnpoints[i].getPos,i);
+                weaponSpawnpoints[i].setWeapon(1);
+            }
+        }
+    }
     for(let i = 0; i < weapons.length; i++){
         weapons[i].updateWeapon();
+    }
+    for(let i = 0; i < weaponSpawnpoints.length; i++){
+        weaponSpawnpoints[i].updateSpawn();
     }
     renderer.render( scene, camera );
 
@@ -404,56 +426,50 @@ function updateEntityCounter(){
     elem.innerHTML = "Entities: " + entitiesCounter;
 }
 
-function addBook(){
-    function addBookMesh(geometry, materials) {
+//laden van mesh, 1 keer doen!!!!
+function addWeaponModels(path,dmg,dur,range,speed,knockback,name,decay){
+    function addWeaponMesh(geometry, materials) {
         materials.forEach( function ( material ) {
             material.skinning = true;
             material.shininess = 0.1;
         } );
         mesh = new THREE.Mesh(geometry, materials);
-        onDoneBook();
+        mesh.userData = {
+            DMG: dmg,
+            DUR: dur,
+            RANGE: range,
+            SPEED: speed,
+            KB: knockback,
+            NAME: name,
+            DECAY: decay,
+            MESH: meshcounter,
+        };
+        weaponMeshes.push(mesh);
+        meshcounter++;
     }
-    loader.load('models/Book.json', addBookMesh);
+    loader.load(weaponPaths[path], addWeaponMesh);
 }
 
-function onDoneBook(){
+//deze aanroepen voor een nieuwe wapen, bij 2 of meer dezelfde wapens, elk dezelfde mesh meegeven
+function addNewWeapon(dmg,dur,range,speed,knockback,name,decay,mesh,pos,i){
     weaponId++;
-    weapons.push(new Weapon(15,20,0.2,0,0.5,mesh,"Mathematics Book",60000));
+    var model = weaponMeshes[mesh];
+    weapons.push(new Weapon(dmg,dur,range,speed,knockback,model.clone(),name,decay));
     var obj = weapons[weapons.length - 1].getMesh;
+    obj.position.set(pos.x,pos.y,pos.z)
     obj.userData = {
         ID: weaponId.toString()
     };
-    obj.position.set(30,1,0);
     weaponsGroup.add(obj);
-    modelsReady = true;
+    weaponSpawnpoints[i].setWeapon(weapons[weapons.length - 1]);
 }
 
-function addMonitor(){
-    function addMonitorMesh(geometry, materials) {
-        materials.forEach( function ( material ) {
-            material.skinning = true;
-            material.shininess = 0.1;
-        } );
-        mesh = new THREE.Mesh(geometry, materials);
-        onDoneMonitor();
-    }
-    loader.load('models/Monitor.json', addMonitorMesh);
-}
-
-function onDoneMonitor(){
-    weaponId++;
-    weapons.push(new Weapon(40,20,0.4,300,1.4,mesh,"Monitor",60000));
-    var obj = weapons[weapons.length - 1].getMesh;
-    obj.userData = {
-        ID: weaponId.toString()
-    };
-    obj.position.set(25,1,0);
-    weaponsGroup.add(obj);
-    modelsReady = true;
-}
-
+//laadt wapens eerste keer on startup.
 function instantiateModels(){
-    addBook();
-    addMonitor();
+    addWeaponModels(0,15,20,0.2,0,0.5,"Mathematics Book",60000);  //mesh 0
+    addWeaponModels(1,40,15,0.4,400,1.4,"Monitor",60000);         //mesh 1
+    addWeaponModels(2,30,17,0.2,0,0.5,"Keyboard",60000);          //mesh 2
+    addWeaponModels(3,20,15,1,200,0.5,"Pointer",60000);           //mesh 3
+    modelsReady = true;
 }
 
