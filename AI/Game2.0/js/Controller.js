@@ -21,7 +21,8 @@ var entitiesCounter = 0;
 var modelsReady = false;
 var weapons = [];
 var weaponId = 0;
-var weaponPaths = ['models/Book.json','models/Monitor.json','models/Keyboard.json','models/Pointer.json'];
+var weaponPaths = ['models/Book.json','models/Monitor.json','models/Keyboard.json','models/Pointer.json','models/Laptop.json',
+    'models/Map.json','models/Broomstick.json','models/Watercanteen.json','models/Trashbin.json','models/Globe.json','models/Tablet.json'];
 var weaponSpawnpoints = [new WeaponSpawnpoint(25,1,0,30000),new WeaponSpawnpoint(30,1,0,30000),new WeaponSpawnpoint(35,1,0,30000)];
 var weaponMeshes = [];
 var meshcounter = 0;
@@ -466,10 +467,17 @@ function addNewWeapon(dmg,dur,range,speed,knockback,name,decay,mesh,pos,i){
 
 //laadt wapens eerste keer on startup.
 function instantiateModels(){
-    addWeaponModels(0,15,20,0.2,0,0.5,"Mathematics Book",60000);  //mesh 0
-    addWeaponModels(1,40,15,0.4,400,1.4,"Monitor",60000);         //mesh 1
+    addWeaponModels(0,15,20,0.2,0,0.3,"Mathematics Book",60000);  //mesh 0
+    addWeaponModels(1,50,15,0.5,400,1.4,"Monitor",60000);         //mesh 1
     addWeaponModels(2,30,17,0.2,0,0.5,"Keyboard",60000);          //mesh 2
     addWeaponModels(3,20,15,1,200,0.5,"Pointer",60000);           //mesh 3
+    addWeaponModels(4,40,25,0.4,200,0.7,"Laptop",60000);          //mesh 4
+    addWeaponModels(5,15,20,0.2,0,0.2,"Map",60000);               //mesh 5
+    addWeaponModels(6,30,25,1,200,0.8,"Broomstick",60000);        //mesh 6
+    addWeaponModels(7,20,30,0.2,0,0.2,"Watercanteen",60000);      //mesh 7
+    addWeaponModels(8,45,30,0.5,350,1,"Trashbin",60000);          //mesh 8
+    addWeaponModels(9,70,10,0.8,500,1.5,"Globe",60000);           //mesh 9
+    addWeaponModels(10,25,25,0.3,100,0.4,"Tablet",60000);         //mesh 10
     modelsReady = true;
 }
 
