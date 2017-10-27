@@ -81,5 +81,8 @@ class Weapon {
                 this.isDropped = true;
             }
         }
+        if(this.isDropped){
+            this.mesh.rotation.y += 0.02;
+        }
     }
 }

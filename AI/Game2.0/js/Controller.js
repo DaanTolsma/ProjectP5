@@ -20,12 +20,18 @@ var damageHandler = new DamageHandler();
 var entitiesCounter = 0;
 var modelsReady = false;
 var weapons = [];
+var buffs = [];
 var weaponId = 0;
+var buffId = 0;
 var weaponPaths = ['models/Book.json','models/Monitor.json','models/Keyboard.json','models/Pointer.json','models/Laptop.json',
     'models/Map.json','models/Broomstick.json','models/Watercanteen.json','models/Trashbin.json','models/Globe.json','models/Tablet.json'];
+var buffPaths = ['models/Sodacan.json'];
 var weaponSpawnpoints = [new WeaponSpawnpoint(25,1,0,30000),new WeaponSpawnpoint(30,1,0,30000),new WeaponSpawnpoint(35,1,0,30000)];
+var buffSpawnpoints = [new BuffSpawnpoint(40,1,0,45000)];
 var weaponMeshes = [];
-var meshcounter = 0;
+var buffMeshes = [];
+var weaponmeshcounter = 0;
+var buffmeshcounter = 0;
 
 var blocker = document.getElementById( 'blocker' );
 var instructions = document.getElementById( 'instructions' );
@@ -36,6 +42,7 @@ var objects = [];
 var objectCollisions = new THREE.Group();
 var entitiesGroup = new THREE.Group();
 var weaponsGroup = new THREE.Group();
+var buffGroup = new THREE.Group();
 var loader = new THREE.JSONLoader();
 
 if ( havePointerLock ) {
@@ -123,6 +130,7 @@ function init() {
     scene.add(objectCollisions);
     scene.add(entitiesGroup);
     scene.add(weaponsGroup);
+    scene.add(buffGroup);
     objectCollisions.add(player.getMesh);
     var onKeyDown = function (event) {
 
@@ -264,23 +272,8 @@ function render() {
         }
     }
     AIMovement(deltaTime);
-    if(weaponMeshes.length > 0){
-        for(let i = 0; i < weaponSpawnpoints.length; i++){
-            if(weaponSpawnpoints[i].getWeapon == null && weaponSpawnpoints[i].isAllowed){
-                console.log(weaponMeshes);
-                var num = Math.floor((Math.random() * ((weaponMeshes.length - 1) - 0)) + 0);
-                var mod = weaponMeshes[num];
-                addNewWeapon(mod.userData.DMG,mod.userData.DUR,mod.userData.RANGE,mod.userData.SPEED,mod.userData.KB,
-                    mod.userData.NAME,mod.userData.DECAY,mod.userData.MESH,weaponSpawnpoints[i].getPos,i);
-                weaponSpawnpoints[i].setWeapon(1);
-            }
-        }
-    }
-    for(let i = 0; i < weapons.length; i++){
-        weapons[i].updateWeapon();
-    }
-    for(let i = 0; i < weaponSpawnpoints.length; i++){
-        weaponSpawnpoints[i].updateSpawn();
+    if(player != null){
+        handleItemSpawnpoints();
     }
     renderer.render( scene, camera );
 
@@ -366,7 +359,7 @@ function addArms(posx,posz){
         var bone = mesh.children[0].children[0].children[0];
         onDoneArms(posx,posz,bone);
     }
-    loader.load('models/SingleArm1.json', addArmsMesh);
+    loader.load('models/SingleArm.json', addArmsMesh);
 }
 
 function onDoneArms(posx,posz,bone){
@@ -443,10 +436,10 @@ function addWeaponModels(path,dmg,dur,range,speed,knockback,name,decay){
             KB: knockback,
             NAME: name,
             DECAY: decay,
-            MESH: meshcounter,
+            MESH: weaponmeshcounter,
         };
         weaponMeshes.push(mesh);
-        meshcounter++;
+        weaponmeshcounter++;
     }
     loader.load(weaponPaths[path], addWeaponMesh);
 }
@@ -465,6 +458,37 @@ function addNewWeapon(dmg,dur,range,speed,knockback,name,decay,mesh,pos,i){
     weaponSpawnpoints[i].setWeapon(weapons[weapons.length - 1]);
 }
 
+function addBuffModels(path,health,name){
+    function addBuffMesh(geometry, materials) {
+        materials.forEach( function ( material ) {
+            material.skinning = true;
+            material.shininess = 0.1;
+        } );
+        mesh = new THREE.Mesh(geometry, materials);
+        mesh.userData = {
+            HEALTH: health,
+            NAME: name,
+            MESH: buffmeshcounter,
+        };
+        buffMeshes.push(mesh);
+        buffmeshcounter++;
+    }
+    loader.load(buffPaths[path], addBuffMesh);
+}
+
+function addNewBuff(health,name,mesh,pos,i){
+    buffId++;
+    var model = buffMeshes[mesh];
+    buffs.push(new Buff(health,name,model.clone()));
+    var obj = buffs[buffs.length - 1].getMesh;
+    obj.position.set(pos.x,pos.y,pos.z)
+    obj.userData = {
+        ID: buffId.toString()
+    };
+    buffGroup.add(obj);
+    buffSpawnpoints[i].setBuff(buffs[buffs.length - 1]);
+}
+
 //laadt wapens eerste keer on startup.
 function instantiateModels(){
     addWeaponModels(0,15,20,0.2,0,0.3,"Mathematics Book",60000);  //mesh 0
@@ -478,6 +502,39 @@ function instantiateModels(){
     addWeaponModels(8,45,30,0.5,350,1,"Trashbin",60000);          //mesh 8
     addWeaponModels(9,70,10,0.8,500,1.5,"Globe",60000);           //mesh 9
     addWeaponModels(10,25,25,0.3,100,0.4,"Tablet",60000);         //mesh 10
+
+    addBuffModels(0,40,"Energy Drink");                           //mesh 0
     modelsReady = true;
+}
+
+function handleItemSpawnpoints(){
+    if(weaponMeshes.length > 0){
+        for(let i = 0; i < weaponSpawnpoints.length; i++){
+            if(weaponSpawnpoints[i].getWeapon == null && weaponSpawnpoints[i].isAllowed){
+                var num = Math.floor((Math.random() * ((weaponMeshes.length - 1) - 0)) + 0);
+                var mod = weaponMeshes[num];
+                addNewWeapon(mod.userData.DMG,mod.userData.DUR,mod.userData.RANGE,mod.userData.SPEED,mod.userData.KB,
+                    mod.userData.NAME,mod.userData.DECAY,mod.userData.MESH,weaponSpawnpoints[i].getPos,i);
+            }
+        }
+    }
+    if(buffMeshes.length > 0){
+        for(let i = 0; i < buffSpawnpoints.length; i++){
+            if(buffSpawnpoints[i].getBuff == null && buffSpawnpoints[i].isAllowed){
+                var num = Math.floor((Math.random() * ((buffMeshes.length - 1) - 0)) + 0);
+                var mod = buffMeshes[num];
+                addNewBuff(mod.userData.HEALTH,mod.userData.NAME,mod.userData.MESH,buffSpawnpoints[i].getPos,i);
+            }
+        }
+    }
+    for(let i = 0; i < weapons.length; i++){
+        weapons[i].updateWeapon();
+    }
+    for(let i = 0; i < weaponSpawnpoints.length; i++){
+        weaponSpawnpoints[i].updateSpawn();
+    }
+    for(let i = 0; i < buffSpawnpoints.length; i++){
+        buffSpawnpoints[i].updateSpawn();
+    }
 }
 

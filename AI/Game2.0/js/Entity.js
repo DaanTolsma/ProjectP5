@@ -106,7 +106,6 @@ class Entity {
         if(this.applyKnockback > 0){
             this.mesh.translateZ(-knockbackSpeed);
             this.applyKnockback -= knockbackSpeed;
-            console.log(this.applyKnockback);
         }
 
         if(this.applyKnockback <= 0){

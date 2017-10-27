@@ -19,6 +19,7 @@ class Player {
         this.weapon = null;
         this.pickupRange = pickuprange;
         this.baseknockback = knockback;
+        this.maxHealth = health;
     }
 
     get getMesh(){
@@ -29,16 +30,16 @@ class Player {
         return this.health;
     }
 
+    get getMaxHealth(){
+        return this.maxHealth;
+    }
+
     get getRange(){
         return this.range;
     }
 
     get getBasedmg(){
         return this.basedmg;
-    }
-
-    get getBasecooldown(){
-        return this.basecooldown;
     }
 
     get isDeath(){

@@ -26,6 +26,7 @@ class WeaponSpawnpoint {
     updateSpawn(){
         if(this.weapon != null){
             spawnWeapon = false;
+            this.weapon.getMesh.rotation.y += 0.02;
         }
         if(this.weapon == null && !stopcount && !spawnWeapon){
             stopcount = true;
