@@ -19,17 +19,15 @@ var testobj = null;
 var damageHandler = new DamageHandler();
 var entitiesCounter = 0;
 var modelsReady = false;
-var startbuffs = true;
 var weapons = [];
 var buffs = [];
 var weaponId = 0;
 var buffId = 0;
-var healthbuffindex = 0;
 var weaponPaths = ['models/Book.json','models/Monitor.json','models/Keyboard.json','models/Pointer.json','models/Laptop.json',
     'models/Map.json','models/Broomstick.json','models/Watercanteen.json','models/Trashbin.json','models/Globe.json','models/Tablet.json'];
-var buffPaths = ['models/Sodacan.json','models/Snack.json','models/Beer.json','models/Coffee.json'];
+var buffPaths = ['models/Sodacan.json'];
 var weaponSpawnpoints = [new WeaponSpawnpoint(25,1,0,30000),new WeaponSpawnpoint(30,1,0,30000),new WeaponSpawnpoint(35,1,0,30000)];
-var buffSpawnpoints = [new BuffSpawnpoint(40,1,0,2000),new BuffSpawnpoint(45,1,0,2000),new BuffSpawnpoint(50,1,0,2000)];
+var buffSpawnpoints = [new BuffSpawnpoint(40,1,0,45000)];
 var weaponMeshes = [];
 var buffMeshes = [];
 var weaponmeshcounter = 0;
@@ -108,7 +106,7 @@ init();
 
 setTimeout(function(){
     render();
-}, 2000);
+}, 1000);
 
 var controlsEnabled = false;
 
@@ -159,8 +157,8 @@ function init() {
                 break;
 
             case 32: // space
-                //if (canJump === true) velocity.y += 150;
-                //canJump = false;
+                if (canJump === true) velocity.y += 150;
+                canJump = false;
                 break;
 
             case 69: // e
@@ -231,11 +229,6 @@ function render() {
         modelsReady = false;
     }
 
-    var speedboost = 1;
-    if(player != null){
-        speedboost += player.getSpeedBoost;
-    }
-
     if ( controlsEnabled ) {
 
         var time = performance.now();
@@ -246,11 +239,11 @@ function render() {
 
         velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-        if ( moveForward ) velocity.z -= (200.0 * speedboost) * delta;
-        if ( moveBackward ) velocity.z += (200.0 * speedboost) * delta;
+        if ( moveForward ) velocity.z -= 400.0 * delta;
+        if ( moveBackward ) velocity.z += 400.0 * delta;
 
-        if ( moveLeft ) velocity.x -= (200.0 * speedboost) * delta;
-        if ( moveRight ) velocity.x += (200.0 * speedboost) * delta;
+        if ( moveLeft ) velocity.x -= 400.0 * delta;
+        if ( moveRight ) velocity.x += 400.0 * delta;
 
         controls.getObject().translateX( velocity.x * delta );
         controls.getObject().translateY( velocity.y * delta );
@@ -465,7 +458,7 @@ function addNewWeapon(dmg,dur,range,speed,knockback,name,decay,mesh,pos,i){
     weaponSpawnpoints[i].setWeapon(weapons[weapons.length - 1]);
 }
 
-function addBuffModels(path,health,name,dmgboost,speedboost,hpboost,dur){
+function addBuffModels(path,health,name){
     function addBuffMesh(geometry, materials) {
         materials.forEach( function ( material ) {
             material.skinning = true;
@@ -474,10 +467,6 @@ function addBuffModels(path,health,name,dmgboost,speedboost,hpboost,dur){
         mesh = new THREE.Mesh(geometry, materials);
         mesh.userData = {
             HEALTH: health,
-            DMG: dmgboost,
-            SPD: speedboost,
-            HP: hpboost,
-            DUR: dur,
             NAME: name,
             MESH: buffmeshcounter,
         };
@@ -487,10 +476,10 @@ function addBuffModels(path,health,name,dmgboost,speedboost,hpboost,dur){
     loader.load(buffPaths[path], addBuffMesh);
 }
 
-function addNewBuff(health,name,mesh,pos,i,dmgboost,speedboost,hpboost,dur){
+function addNewBuff(health,name,mesh,pos,i){
     buffId++;
     var model = buffMeshes[mesh];
-    buffs.push(new Buff(health,name,model.clone(),dmgboost,speedboost,hpboost,dur));
+    buffs.push(new Buff(health,name,model.clone()));
     var obj = buffs[buffs.length - 1].getMesh;
     obj.position.set(pos.x,pos.y,pos.z)
     obj.userData = {
@@ -514,10 +503,7 @@ function instantiateModels(){
     addWeaponModels(9,70,10,0.8,500,1.5,"Globe",60000);           //mesh 9
     addWeaponModels(10,25,25,0.3,100,0.4,"Tablet",60000);         //mesh 10
 
-    addBuffModels(0,40,"Energy Drink",0,0,0,0);                   //mesh 0
-    addBuffModels(1,0,"Snack",0.5,0,0,15000);                     //mesh 1
-    addBuffModels(2,0,"Beer",0,0.5,0,15000);                      //mesh 2
-    addBuffModels(3,0,"Coffee",0,0,50,15000);                     //mesh 3
+    addBuffModels(0,40,"Energy Drink");                           //mesh 0
     modelsReady = true;
 }
 
@@ -532,37 +518,12 @@ function handleItemSpawnpoints(){
             }
         }
     }
-
-    if(startbuffs){
-        for(let i = 0; i < buffMeshes.length; i++){
-            if(buffMeshes[i].userData.HEALTH > 0){
-                console.log("test");
-                healthbuffindex = i;
-            }
-        }
-    }
-
     if(buffMeshes.length > 0){
-        var healthcounter = 0;
-        for(let j = 0; j < buffSpawnpoints.length; j++){
-            if(buffSpawnpoints[j].getBuff != null && healthcounter == 0){
-                var buff = buffSpawnpoints[j].getBuff;
-                if(buff.getHealth > 0){
-                    healthcounter++;
-                }
-            }
-        }
         for(let i = 0; i < buffSpawnpoints.length; i++){
             if(buffSpawnpoints[i].getBuff == null && buffSpawnpoints[i].isAllowed){
                 var num = Math.floor((Math.random() * ((buffMeshes.length - 1) - 0)) + 0);
                 var mod = buffMeshes[num];
-                if(healthcounter == 0 || startbuffs){
-                    healthcounter++;
-                    mod = buffMeshes[healthbuffindex];
-                    startbuffs = false;
-                }
-                addNewBuff(mod.userData.HEALTH,mod.userData.NAME,mod.userData.MESH,buffSpawnpoints[i].getPos,i,mod.userData.DMG
-                    ,mod.userData.SPD,mod.userData.HP,mod.userData.DUR);
+                addNewBuff(mod.userData.HEALTH,mod.userData.NAME,mod.userData.MESH,buffSpawnpoints[i].getPos,i);
             }
         }
     }
