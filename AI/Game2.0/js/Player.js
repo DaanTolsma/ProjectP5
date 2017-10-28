@@ -2,6 +2,15 @@ var attackAllowed = true;
 var countG = 0;
 var elem = document.getElementById( 'pickup' );
 var framecounter = 0;
+var dmgdur = 0;
+var speeddur = 0;
+var hpdur = 0;
+var dmgcount = false;
+var speedcount = false;
+var hpcount = false;
+var stopdmgboost = false;
+var stopspeedboost = false;
+var stophpboost = false;
 
 class Player {
     constructor(object,posx,posz,id,size,health,range,dmg,cooldown,pickuprange,knockback){
@@ -20,6 +29,9 @@ class Player {
         this.pickupRange = pickuprange;
         this.baseknockback = knockback;
         this.maxHealth = health;
+        this.dmgboost = 0;
+        this.speedboost = 0;
+        this.hpboost = 0;
     }
 
     get getMesh(){
@@ -50,12 +62,24 @@ class Player {
         return this.weapon;
     }
 
-    setWeapon(weapon){
-        this.weapon = weapon;
-    }
-
     get getKnockback(){
         return this.baseknockback;
+    }
+
+    get getDmgBoost(){
+        return this.dmgboost;
+    }
+
+    get getSpeedBoost(){
+        return this.speedboost;
+    }
+
+    get getHpBoost(){
+        return this.hpboost;
+    }
+
+    setWeapon(weapon){
+        this.weapon = weapon;
     }
 
     kill(){
@@ -66,6 +90,30 @@ class Player {
         this.health = hp;
         let health = document.getElementById("healthbar");
         health.value = this.health;
+    }
+
+    setMaxHealth(){
+        this.maxHealth += this.hpboost;
+        this.health = this.maxHealth;
+        let health = document.getElementById("healthbar");
+        health.value = this.maxHealth;
+        health.max = this.maxHealth;
+    }
+
+    setDmgBoost(dmgboost,dur){
+        this.dmgboost = dmgboost;
+        dmgdur = dur;
+    }
+
+    setSpeedBoost(speedboost,dur){
+        this.speedboost = speedboost;
+        speeddur = dur;
+    }
+
+    setHpBoost(hpboost,dur){
+        this.hpboost = hpboost;
+        hpdur = dur;
+        this.setMaxHealth()
     }
 
     updatePlayer(entitiesGroup,damageHandler,entities,arms){
@@ -110,6 +158,45 @@ class Player {
             }
         }
 
+        if(this.dmgboost > 0 && !dmgcount){
+            dmgcount = true;
+            setTimeout(function(){
+                stopdmgboost = true;
+                dmgcount = false;
+            }, dmgdur);
+        }
+        if(this.speedboost > 0 && !speedcount){
+            speedcount = true;
+            setTimeout(function(){
+                stopspeedboost = true;
+                speedcount = false;
+            }, speeddur);
+        }
+        if(this.hpboost > 0 && !hpcount){
+            hpcount = true;
+            setTimeout(function(){
+                stophpboost = true;
+                hpcount = false;
+            }, hpdur);
+        }
+
+        if(stopdmgboost){
+            this.dmgboost = 0;
+            stopdmgboost = false;
+        }
+        if(stopspeedboost){
+            this.speedboost = 0;
+            stopspeedboost = false;
+        }
+        if(stophpboost){
+            this.maxHealth -= this.hpboost;
+            if(this.health > this.maxHealth){
+                this.health = this.maxHealth;
+            }
+
+            this.hpboost = 0;
+            stophpboost = false;
+        }
         this.checkPickupWeapon();
     }
 
@@ -160,6 +247,7 @@ class Player {
                     this.weapon = weapons[parseInt(intersection.userData.ID) - 1];
                     scene.remove(weapons[parseInt(intersection.userData.ID) - 1]);
                     weaponsGroup.remove(weapons[parseInt(intersection.userData.ID) - 1].getMesh);
+                    this.weapon.getMesh.rotation.y = 0;
                     this.weapon.getMesh.position.set(arms.bone.position.x,arms.bone.position.y,arms.bone.position.z);
                     this.weapon.getMesh.translateZ(1.5);
                     arms.showWeapon(this.weapon.getMesh);

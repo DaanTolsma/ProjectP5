@@ -9,6 +9,7 @@ class DamageHandler{
         var weaponDur = -1;
         var knockback = 0;
         var weaponbonus = 0;
+        var dmgboostmodifier = 1;
         if(attacker instanceof Player){
             knockback = attacker.getKnockback;
             if(attacker.weapon != null){
@@ -17,12 +18,13 @@ class DamageHandler{
                 knockback += attacker.weapon.getKnockback;
             }
             defender.setKnockback(knockback);
+            dmgboostmodifier += attacker.getDmgBoost;
         }
         var averagedmg = basedmg + weaponbonus;
         var RNGpercentage = 0.15;
         var mindmg = averagedmg * (1 - RNGpercentage);
         var maxdmg = averagedmg * (1 + RNGpercentage);
-        var finaldmg = Math.floor((Math.random() * (maxdmg - mindmg)) + mindmg);
+        var finaldmg = (Math.floor((Math.random() * (maxdmg - mindmg)) + mindmg)) * dmgboostmodifier;
         var newhealth = hpdef - finaldmg;
         if(weaponDur > 0){
             attacker.weapon.setDur();
