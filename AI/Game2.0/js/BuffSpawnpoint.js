@@ -29,17 +29,33 @@ class BuffSpawnpoint {
         if(this.buff != null){
             spawnBuff = false;
             this.buff.getMesh.rotation.y += 0.02;
-
             var pos = new THREE.Vector3(this.pos.x,0,this.pos.z);
             var playerpos = new THREE.Vector3(player.getMesh.position.x,0,player.getMesh.position.z);
-            if(pos.distanceTo(playerpos) <= 1.5 && player.getHealth < player.getMaxHealth && framecounter > 5){
-                var finalhealth = player.getHealth + this.buff.getHealth;
-                if(finalhealth > 100){
-                    finalhealth = 100;
+            if(pos.distanceTo(playerpos) <= 1.5 && framecounter > 5){
+                if(this.buff.getHpBoost != 0 && player.getHpBoost == 0 && this.buff != null){
+                    player.setHpBoost(this.buff.getHpBoost,this.buff.getDuration);
+                    this.buff.removeBuff();
+                    this.buff = null;
                 }
-                player.setHealth(finalhealth);
-                this.buff.removeBuff();
-                this.buff = null;
+                if(this.buff.getDmgBoost != 0 && this.buff != null){                //bij deze statements kan null uitkomen wanneer de
+                    player.setDmgBoost(this.buff.getDmgBoost,this.buff.getDuration);//voorgaande statement is uitgevoerd, dit is geen probleem
+                    this.buff.removeBuff();                                         //want het zal nooit in de andere statemens komen.
+                    this.buff = null;
+                }
+                if(this.buff.getSpeedBoost != 0 && this.buff != null){
+                    player.setSpeedBoost(this.buff.getSpeedBoost,this.buff.getDuration);
+                    this.buff.removeBuff();
+                    this.buff = null;
+                }
+                if(this.buff.getHealth > 0 && player.getHealth < player.getMaxHealth && this.buff != null){
+                    var finalhealth = player.getHealth + this.buff.getHealth;
+                    if(finalhealth > player.getMaxHealth){
+                        finalhealth = player.getMaxHealth;
+                    }
+                    player.setHealth(finalhealth);
+                    this.buff.removeBuff();
+                    this.buff = null;
+                }
                 framecounter = 0;
             }
         }
