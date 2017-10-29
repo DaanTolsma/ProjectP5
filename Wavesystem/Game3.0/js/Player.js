@@ -62,6 +62,12 @@ class Player {
             }, this.basecooldown);
             this.attack(entitiesGroup,damageHandler,entities);
         }
+        if(Key.isDown(Key.Q)){
+            console.log(this.object.position);
+        }
+        for(var i = 0; i < worldobjects.length; i++) {
+            this.objectCollisionCheck(worldobjects[i]);
+        }
     }
 
     attack(entitiesGroup,damageHandler,entities){
@@ -91,5 +97,19 @@ class Player {
             }
         }
         return false;
+    }
+
+    objectCollisionCheck(worldobject){
+        /*var direction = new THREE.Vector3().copy(this.object.position);
+        this.raycaster.set(this.object.position, direction);
+        var intersections = this.raycaster.intersectObjects(lvlobject.children);
+        if(intersections.length > 0) {
+            console.log("collision1");
+            var intersection = intersections[0];
+            if(intersection.distance < 10){
+                console.log("collision");
+                this.speed = 0;
+            }
+        }*/
     }
 }

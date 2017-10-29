@@ -21,12 +21,37 @@ var wavesize = 0;
 var waveround = 0;
 var wavespawned = false;
 var entityspawned = false;
+var randomdmg = null;
+var randomhp = null;
 var playercollision = false;
 var positx = 22;
 var positz = 1;
 var collision = [];
 var collisionp = [];
+var charactertextures = [];
+charactertextures.push('models/CharacterProject.json');
+charactertextures.push('models/CharacterProject2.json');
+charactertextures.push('models/CharacterProject3.json');
+charactertextures.push('models/CharacterProject4.json');
+charactertextures.push('models/CharacterProject5.json');
 
+var worldobjecttextures = [];
+worldobjecttextures.push('models/digibord.json'); //0
+worldobjecttextures.push('models/kast_dicht.json');//1
+worldobjecttextures.push('models/kast_open.json');//2
+worldobjecttextures.push('models/Wall.json');//3
+worldobjecttextures.push('models/poster.json');//4
+worldobjecttextures.push('models/prullenbak.json');//5
+worldobjecttextures.push('models/Windowframe.json');//6
+worldobjecttextures.push('models/tafel_docent.json');//7
+worldobjecttextures.push('models/tafel_leerling.json');//8
+worldobjecttextures.push('models/Doorframe.json');//9
+
+var worldobjects = [];
+var worldobjectGroup = new THREE.Group();
+var worldcollisionGroup = new THREE.Group();
+var worldobjectId = null;
+var indexnmr;
 var raycaster;
 
 var blocker = document.getElementById( 'blocker' );
@@ -120,6 +145,8 @@ function init() {
     player = new Player(controls.getObject(),20,0,1,2.5,100,5,100,800);
     scene.add(objectCollisions);
     scene.add(entitiesGroup);
+    scene.add(worldobjectGroup);
+    scene.add(worldcollisionGroup);
     objectCollisions.add(player.getMesh);
     createScene();
     var onKeyDown = function ( event ) {
@@ -345,10 +372,140 @@ function createScene(){
     floor.rotation.x = - Math.PI / 2;
     scene.add(floor);
 
+    //0 digibord
+    //1 kast dicht
+    //2 kast open
+    //3 muur
+    //4 poster
+    //5 prullenbak
+    //6 raam
+    //7 tafel docent
+    //8 tafel leerling
+    //9 doorframe
     //Z is de hoogte!
-    addWall(10,30,10,-30,5,0);
-    addWall(10,10,30,0,5,0);
-    addWall(30,10,10,40,5,-30);
+    //addWall(10,30,10,-30,5,0);
+    //addWall(10,10,30,0,5,0);
+   // addWall(30,10,10,40,5,-30);
+    addObject(3,-70,0,-10,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,-33,0,-40,0,90,0,1.5,1.5,2.5);//wall
+    addObject(3,-63,0,20,0,90,0,1.5,1.5,1);//wall
+    addObject(3,-25,0,20,0,90,0,1.5,1.5,1.5);//wall
+    addObject(3,4.4,0,-5,0,0,0,1.5,1.5,0.8);//wall
+    addObject(3,0,0,12,0,0,0,1.5,1.5,1.8);//wall
+    addObject(3,-15.1,0,30,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,12,0,39.9,0,90,0,1.5,1.5,1);//wall
+    addObject(3,9.2,0,25,0,90,0,1.5,1.5,1.4);//wall
+    addObject(3,60.4,0,8,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,60.4,0,-39,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,19,0,2,0,0,0,1.5,1.5,2.5);//wall
+    addObject(3,19,0,-58,0,0,0,1.5,1.5,2.7);//wall
+    addObject(3,25.5,0,-77,0,90,0,1.5,1.5,1);//wall
+    addObject(3,54,0,-77,0,90,0,1.5,1.5,1);//wall
+    addObject(3,19,0,-88,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,60.4,0,-88,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,40,0,-99,0,90,0,1.5,1.5,3);//wall
+    addObject(3,-15.1,0,50,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,19,0,50,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,2,0,60,0,90,0,1.5,1.5,2.5);//wall
+    addObject(3,-80,0,-12,0,90,0,1.5,1.5,1.5);//wall
+    addObject(3,-80,0,20,0,90,0,1.5,1.5,1.5);//wall
+    addObject(3,-90,0,4,0,0,0,1.5,1.5,2.3);//wall
+    addObject(3,4.4,0,-51,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,-20,0,-51,0,0,0,1.5,1.5,1.5);//wall
+    addObject(3,-8,0,-61,0,90,0,1.5,1.5,1.7);//wall
+
+    addObject(6,-70,0,-30,0,0,0,1.5,1.5,1.7);//window
+    addObject(6,-60,0,-40,0,90,0,1.5,1.5,1.7);//window
+    addObject(6,4.4,0,-25,0,0,0,1.5,1.5,2.4);//window
+    addObject(6,-42,0,20,0,90,0,1.5,1.5,2.5);//window
+    addObject(6,-20,0,10,0,0,0,1.5,1.5,1.7);//window
+    addObject(6,40,0,46,0,90,0,1.5,1.5,3.5);//window
+    addObject(6,60.4,0,32,0,0,0,1.5,1.5,2.3);//window
+    addObject(6,60.4,0,-16,0,0,0,1.5,1.5,2.3);//window
+    addObject(6,60.4,0,-63,0,0,0,1.5,1.5,2.3);//window
+    addObject(6,19,0,-25,0,0,0,1.5,1.5,2.4);//window
+
+    addObject(9,-60,0,-12,0,90,0,1.5,1.5,2);//doorframe
+    addObject(9,-46.6,0,-26,0,0,0,1.5,1.5,2);//doorframe
+    addObject(9,-6.6,0,0,0,90,0,1.5,1.5,2);//doorframe
+    addObject(9,19,0,32.6,0,0,0,1.5,1.5,2);//doorframe
+    addObject(9,39.65,0,-77,0,90,0,1.5,1.5,2);//doorframe
+    addObject(9,-1.7,0,39.9,0,90,0,1.5,1.5,2);//doorframe
+    addObject(9,-70,0,6,0,0,0,1.5,1.5,2);//doorframe
+    addObject(9,-9,0,-40,0,90,0,1.5,1.5,2);//doorframe
+
+    addObject(7,-63,0,-34,0,0,0,4,4,4);//tafel docent
+    addObject(7,-59,0,-33.8,0,180,0,4,4,4);//tafel docent
+    addObject(7,-26.7,0,10.1,0,180,0,4,4,4);//tafel docent
+    addObject(7,-30.7,0,9.9,0,0,0,4,4,4);//tafel docent
+    addObject(7,-40.5,0,10.1,0,180,0,4,4,4);//tafel docent
+    addObject(7,-44.4,0,9.9,0,0,0,4,4,4);//tafel docent
+    addObject(7,49.2,0,36.7,0,90,0,4,4,4);//tafel docent
+    addObject(7,49.4,0,32.9,0,-90,0,4,4,4);//tafel docent
+    addObject(7,27.6,0,20.9,0,90,0,4,4,4);//tafel docent
+    addObject(7,27.8,0,16.9,0,-90,0,4,4,4);//tafel docent
+    addObject(7,48.2,0,8.8,0,90,0,4,4,4);//tafel docent
+    addObject(7,48.4,0,4.9,0,-90,0,4,4,4);//tafel docent
+    addObject(7,27.6,0,-5.5,0,90,0,4,4,4);//tafel docent
+    addObject(7,27.8,0,-9.3,0,-90,0,4,4,4);//tafel docent
+    addObject(7,51.8,0,-20.7,0,90,0,4,4,4);//tafel docent
+    addObject(7,52,0,-24.7,0,-90,0,4,4,4);//tafel docent
+    addObject(7,52,0,-10,0,-90,0,4,4,4);//tafel docent
+    addObject(7,27.6,0,-21.5,0,90,0,4,4,4);//tafel docent
+    addObject(7,27.8,0,-25.5,0,-90,0,4,4,4);//tafel docent
+    addObject(7,22,0,-45.3,0,180,0,4,4,4);//tafel docent
+    addObject(7,22,0,-54.8,0,180,0,4,4,4);//tafel docent
+    addObject(7,22,0,-64.3,0,180,0,4,4,4);//tafel docent
+    addObject(7,57.5,0,-45.3,0,0,0,4,4,4);//tafel docent
+    addObject(7,57.5,0,-54.8,0,0,0,4,4,4);//tafel docent
+    addObject(7,57.5,0,-64.3,0,0,0,4,4,4);//tafel docent
+
+    addObject(1,-49.5,0,-14.5,0,130,0,2.5,2.5,2.5);//kast dicht
+    addObject(1,1.7,0,-37.4,0,220,0,2.5,2.5,2.5);//kast dicht
+    addObject(1,-10.9,0,38.7,0,90,0,2.5,2.5,2.5);//kast dicht
+
+    addObject(4,-69.4,3,-18,0,0,0,2.5,2.5,2.5);//poster
+    addObject(4,-0.5,3,14.2,0,180,0,2.5,2.5,2.5);//poster
+    addObject(4,9.1,3,25.5,0,-90,0,2.5,2.5,2.5);//poster
+
+    addObject(0,-27,2,-39.2,0,90,0,3.7,3.7,3.7);//digibord
+    addObject(0,-45,2,84,0,90,0,3.7,3.7,3.7);//digibord
+
+    addObject(8,-27.1,0,-29.7,0,90,0,4,4,4);//tafel leerling
+    addObject(8,-27.1,0,-22.4,0,90,0,4,4,4);//tafel leerling
+    addObject(8,-27.1,0,-15.2,0,90,0,4,4,4);//tafel leerling
+
+    addObject(2,3.2,0,-9,0,180,0,2.5,2.5,7);//kast open
+    addObject(2,-60,0,18.9,0,90,0,2.5,2.5,5);//kast open
+    addObject(2,-14.7,0,1.1,0,-90,0,2.5,2.5,4);//kast open
+    addObject(2,51.5,0,-8,0,-90,0,2.5,2.5,8);//kast open
+    addObject(2,27.8,0,-38.2,0,-90,0,2.5,2.5,8);//kast open
+
+    addObject(5,-67.5,0,-18,0,0,0,2.5,2.5,2.5);//prullenbak
+    addObject(5,-44.6,0,-38,0,0,0,2.5,2.5,2.5);//prullenbak
+    addObject(5,21.4,0,-74.7,0,0,0,2.5,2.5,2.5);//prullenbak
+    addObject(5,58,0,-74.7,0,0,0,2.5,2.5,2.5);//prullenbak
+    addObject(5,21.4,0,43.2,0,0,0,2.5,2.5,2.5);//prullenbak
+}
+
+function addObject(indexnr,posx,posy,posz,rotationx,rotationy,rotationz,scalex,scaley,scalez){
+    indexnmr = indexnr;
+    function addWorldObject(geometry, materials) {
+        materials.forEach( function ( material ) {
+            material.shininess = 0.1;
+        } );
+        mesh = new THREE.Mesh(geometry, materials);
+        mesh.scale.set(scalex,scaley,scalez);
+        rotationx = (rotationx * Math.PI)/180;
+        rotationy = (rotationy * Math.PI)/180;
+        rotationz = (rotationz * Math.PI)/180;
+        mesh.rotation.set(rotationx,rotationy,rotationz);
+        worldobjectId++;
+        worldobjects.push(new WorldObject(worldobjectId,posx,posy,posz,mesh,indexnr));
+        worldobjectGroup.add(worldobjects[worldobjects.length - 1].getobjectMesh());
+    }
+    loader.load(worldobjecttextures[indexnr], addWorldObject);
+
 }
 
 function addEntity(posx,posz,health,dmg,range){
@@ -364,7 +521,13 @@ function addEntity(posx,posz,health,dmg,range){
         action.Run = mixer.clipAction(geometry.animations[1]);
         onDone(posx,posz,health,dmg,range);
     }
-    loader.load('models/CharacterProject.json', addCharacter);
+    if(waveround == 10){
+        loader.load('models/CharacterProject6.json', addCharacter);
+    }
+    else {
+        var randindex = THREE.Math.randInt(0, charactertextures.length - 1);
+        loader.load(charactertextures[randindex], addCharacter);
+    }
 }
 
 function onDone(posx,posz,health,dmg,range){
@@ -444,15 +607,45 @@ function generateWaypoints(){
 }
 function setWavesize(posx, posz){
     if(!entityspawned) {
-        wavesize++;
+        wavesize = 1;
         waveround++;
         var elem = document.getElementById('waveAmount');
         elem.innerHTML = "Wave: " + waveround;
         for (let i = 1; i <= wavesize; i++) {
             posx = posx + 6;
             posz = posz + 3;
-            addEntity(posx, posz, 10, 10, 3.5);
-            entityspawned = true;
+            if(waveround == 1 || waveround == 2 || waveround == 3) {
+                randomdmg = THREE.Math.randInt(5,15);
+                randomhp = THREE.Math.randInt(75,125 );
+                addEntity(posx, posz, randomhp, randomdmg, 3.5);
+                entityspawned = true;
+            }
+            if(waveround == 4 || waveround == 5 || waveround == 6) {
+                randomdmg = THREE.Math.randInt(7.5,20);
+                randomhp = THREE.Math.randInt(100,150 );
+
+                addEntity(posx, posz, randomhp, randomdmg, 3.5);
+                entityspawned = true;
+            }
+            if(waveround == 7 || waveround == 8 || waveround == 9) {
+                randomdmg = THREE.Math.randInt(10,22.5);
+                randomhp = THREE.Math.randInt(125,175);
+                addEntity(posx, posz, randomhp, randomdmg, 3.5);
+                entityspawned = true;
+            }
+            if(waveround == 10){
+                wavesize = 1;
+                addEntity(posx, posz, 300, 33, 3.5);
+                entityspawned = true;
+            }
+            if(waveround == 11){
+                wavesize = 20;
+                randomdmg = THREE.Math.randInt(10,22.5);
+                randomhp = THREE.Math.randInt(125,175);
+                addEntity(posx, posz, randomhp, randomdmg, 3.5);
+                entityspawned = true;
+            }
+
         }
     }
 }
