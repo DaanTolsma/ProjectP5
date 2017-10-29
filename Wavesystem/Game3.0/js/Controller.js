@@ -49,9 +49,9 @@ worldobjecttextures.push('models/Doorframe.json');//9
 
 var worldobjects = [];
 var worldobjectGroup = new THREE.Group();
-var worldcollisionGroup = new THREE.Group();
 var worldobjectId = null;
 var indexnmr;
+var nocollision = true;
 var raycaster;
 
 var blocker = document.getElementById( 'blocker' );
@@ -142,11 +142,10 @@ function init() {
     scene = new THREE.Scene();
 
     controls = new THREE.PointerLockControls( camera );
-    player = new Player(controls.getObject(),20,0,1,2.5,100,5,100,800);
+    player = new Player(controls.getObject(),30,0,1,2.5,100,5,100,800);
     scene.add(objectCollisions);
     scene.add(entitiesGroup);
     scene.add(worldobjectGroup);
-    scene.add(worldcollisionGroup);
     objectCollisions.add(player.getMesh);
     createScene();
     var onKeyDown = function ( event ) {
@@ -173,8 +172,8 @@ function init() {
                 break;
 
             case 32: // space
-                if ( canJump === true ) velocity.y += 150;
-                canJump = false;
+                //if ( canJump === true ) velocity.y += 150;
+                //canJump = false;
                 break;
 
             case 69: // e
@@ -243,30 +242,31 @@ function onWindowResize() {
 function render() {
 
     requestAnimationFrame( render );
-
     if ( controlsEnabled ) {
 
         var time = performance.now();
         var delta = ( time - prevTime ) / 1000;
+        calcnextMovement(delta);
+        if(nocollision) {
+            velocity.x -= velocity.x * 10.0 * delta;
+            velocity.z -= velocity.z * 10.0 * delta;
 
-        velocity.x -= velocity.x * 10.0 * delta;
-        velocity.z -= velocity.z * 10.0 * delta;
+            velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-        velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+            if (moveForward && !playercollision) velocity.z -= 200.0 * delta;
+            if (moveForward && playercollision) velocity.z -= 10.0 * delta;
+            if (moveBackward && !playercollision) velocity.z += 200.0 * delta;
+            if (moveBackward && playercollision) velocity.z += 10.0 * delta;
 
-        if ( moveForward && !playercollision ) velocity.z -= 200.0 * delta;
-        if ( moveForward && playercollision) velocity.z -= 10.0 * delta;
-        if ( moveBackward && !playercollision ) velocity.z += 200.0 * delta;
-        if ( moveBackward && playercollision ) velocity.z += 10.0 * delta;
+            if (moveLeft && !playercollision) velocity.x -= 200.0 * delta;
+            if (moveLeft && playercollision) velocity.x -= 10.0 * delta;
+            if (moveRight && !playercollision) velocity.x += 200.0 * delta;
+            if (moveRight && playercollision) velocity.x += 10.0 * delta;
 
-        if ( moveLeft && !playercollision ) velocity.x -= 200.0 * delta;
-        if ( moveLeft && playercollision ) velocity.x -= 10.0 * delta;
-        if ( moveRight && !playercollision ) velocity.x += 200.0 * delta;
-        if ( moveRight && playercollision ) velocity.x += 10.0 * delta;
-
-        controls.getObject().translateX( velocity.x * delta );
-        controls.getObject().translateY( velocity.y * delta );
-        controls.getObject().translateZ( velocity.z * delta );
+            controls.getObject().translateX(velocity.x * delta);
+            controls.getObject().translateY(velocity.y * delta);
+            controls.getObject().translateZ(velocity.z * delta);
+        }
 
         if ( controls.getObject().position.y < 5 ) {
 
@@ -469,7 +469,7 @@ function createScene(){
     addObject(4,9.1,3,25.5,0,-90,0,2.5,2.5,2.5);//poster
 
     addObject(0,-27,2,-39.2,0,90,0,3.7,3.7,3.7);//digibord
-    addObject(0,-45,2,84,0,90,0,3.7,3.7,3.7);//digibord
+    addObject(8,-45,0,84,0,0,0,4,4,4);//tafel leerling
 
     addObject(8,-27.1,0,-29.7,0,90,0,4,4,4);//tafel leerling
     addObject(8,-27.1,0,-22.4,0,90,0,4,4,4);//tafel leerling
@@ -501,11 +501,10 @@ function addObject(indexnr,posx,posy,posz,rotationx,rotationy,rotationz,scalex,s
         rotationz = (rotationz * Math.PI)/180;
         mesh.rotation.set(rotationx,rotationy,rotationz);
         worldobjectId++;
-        worldobjects.push(new WorldObject(worldobjectId,posx,posy,posz,mesh,indexnr));
-        worldobjectGroup.add(worldobjects[worldobjects.length - 1].getobjectMesh());
+        worldobjects.push(new WorldObject(worldobjectId, posx, posy, posz, mesh, indexnr));
+        worldobjectGroup.add(worldobjects[worldobjects.length - 1].objectMesh);
     }
     loader.load(worldobjecttextures[indexnr], addWorldObject);
-
 }
 
 function addEntity(posx,posz,health,dmg,range){
@@ -570,9 +569,6 @@ function updateSpeed(){
     for(var a = 0; a < entities.length; a++){
         entities[a].speedUpdater();
     }
-    if(this.speed > 0){
-        this.animationCheck();
-    }
 }
 
 function addWaypoint(posx,posz){
@@ -590,6 +586,56 @@ function addWall(sizex,sizez,sizey,posx,posy,posz){
     var object = objects[objects.length - 1].getMesh;
     object.userData = {
         ID: wallId.toString()
+    }
+}
+
+function calcnextMovement(delta){
+    var clone = controls.getObject().clone();
+    clone.visible = false;
+    var velo = velocity;
+    velo.x -= velocity.x * 10.0 * delta;
+    velo.z -= velocity.z * 10.0 * delta;
+
+    //velo.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+
+    if ( moveForward && !playercollision ) velo.z -= 200.0 * delta;
+    if ( moveForward && playercollision) velo.z -= 10.0 * delta;
+    if ( moveBackward && !playercollision ) velo.z += 200.0 * delta;
+    if ( moveBackward && playercollision ) velo.z += 10.0 * delta;
+
+    if ( moveLeft && !playercollision ) velo.x -= 200.0 * delta;
+    if ( moveLeft && playercollision ) velo.x -= 10.0 * delta;
+    if ( moveRight && !playercollision ) velo.x += 200.0 * delta;
+    if ( moveRight && playercollision ) velo.x += 10.0 * delta;
+
+    clone.translateX(velo.x * delta);
+    //clone.translateY(velo.y * delta);
+    clone.translateZ(velo.z * delta);
+    scene.add(clone);
+    if(worldobjects.length > 0) {
+        if(moveForward || moveBackward || moveLeft || moveRight){
+            objectCollisionCheck(clone);
+        }
+    }
+    scene.remove(clone);
+}
+
+function objectCollisionCheck(clone){
+    var colcounter = 0;
+    for(var i = 0; i < worldobjects.length; i++) {
+        var playerbox = clone;
+        var objectbox = worldobjects[i].objectMesh;
+        var playerbb = new THREE.Box3().setFromObject(playerbox);
+        var objectbb = new THREE.Box3().setFromObject(objectbox);
+        var collision = playerbb.intersectsBox(objectbb);
+        if (collision) {
+            colcounter++;
+            nocollision = false;
+            break;
+        }
+    }
+    if(colcounter == 0){
+        nocollision = true;
     }
 }
 
@@ -614,20 +660,20 @@ function setWavesize(posx, posz){
         for (let i = 1; i <= wavesize; i++) {
             posx = posx + 6;
             posz = posz + 3;
-            if(waveround == 1 || waveround == 2 || waveround == 3) {
+            if(waveround <= 3) {
                 randomdmg = THREE.Math.randInt(5,15);
                 randomhp = THREE.Math.randInt(75,125 );
                 addEntity(posx, posz, randomhp, randomdmg, 3.5);
                 entityspawned = true;
             }
-            if(waveround == 4 || waveround == 5 || waveround == 6) {
+            if(waveround <= 6 && waveround > 3) {
                 randomdmg = THREE.Math.randInt(7.5,20);
                 randomhp = THREE.Math.randInt(100,150 );
 
                 addEntity(posx, posz, randomhp, randomdmg, 3.5);
                 entityspawned = true;
             }
-            if(waveround == 7 || waveround == 8 || waveround == 9) {
+            if(waveround <= 9 && waveround > 6) {
                 randomdmg = THREE.Math.randInt(10,22.5);
                 randomhp = THREE.Math.randInt(125,175);
                 addEntity(posx, posz, randomhp, randomdmg, 3.5);

@@ -18,8 +18,8 @@ THREE.PointerLockControls = function ( camera ) {
     texture1.repeat.set(1, 1);
     var material = new THREE.MeshPhongMaterial( { map: texture1 } );
     material.shininess = 0;
-    var yawObject = new THREE.Mesh(new THREE.BoxGeometry( 3,
-        10, 3), material);
+    var yawObject = new THREE.Mesh(new THREE.BoxGeometry( 1,
+        10, 1), material);
     yawObject.position.y = 5;
 	yawObject.add( pitchObject );
 

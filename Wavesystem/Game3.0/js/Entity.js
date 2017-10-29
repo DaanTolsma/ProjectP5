@@ -323,8 +323,4 @@ class Entity {
         }
 
     }
-
-    animationCheck(){
-        this.Animation(true);
-    }
 }

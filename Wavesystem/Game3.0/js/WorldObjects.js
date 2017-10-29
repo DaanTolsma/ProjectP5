@@ -1,30 +1,29 @@
-class WorldObject{
-    constructor(id,posx,posy,posz,objectmodel,index){
+class WorldObject {
+    constructor(id, posx, posy, posz, objectmodel, index, rotation) {
         this.id = id;
         this.mesh = objectmodel;
-        this.mesh.position.set(posx,posy,posz);
+        this.mesh.position.set(posx, posy, posz);
         this.indexnmr = index;
-        this.Bbox = new THREE.BoundingBoxHelper(this.mesh);
-        this.Bbox.update();
+        this.rotation = rotation
     }
 
-    getID(){
+    get objectId(){
         return this.id;
     }
 
-    getobjectMesh(){
+    get objectMesh(){
         return this.mesh;
     }
 
-    getobjectPosition(){
+    get positionObject(){
         return this.mesh.position;
     }
 
-    getIndexnmr(){
+    get Index(){
         return this.indexnmr;
     }
 
-    getBoundbox(){
-        return this.Bbox;
+    get Rotation(){
+        return this.rotation;
     }
 }
