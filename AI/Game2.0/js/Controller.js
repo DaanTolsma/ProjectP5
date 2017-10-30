@@ -38,6 +38,10 @@ var buffmeshcounter = 0;
 
 var blocker = document.getElementById( 'blocker' );
 var instructions = document.getElementById( 'instructions' );
+var gameover = document.getElementById("text");
+    gameover.style.display = 'none';
+    gameover = document.getElementById("ul");
+    gameover.style.display = 'none';
 
 var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 var entities = [];
@@ -299,8 +303,7 @@ function render() {
     renderer.render( scene, camera );
     }
     else{
-        controls.enabled = false;
-        controlsEnabled = false;
+        document.exitPointerLock();
         elem = document.getElementById("GameOver");
         elem.style.display = 'block';
         elem = document.getElementById("cursor");
@@ -311,6 +314,12 @@ function render() {
         elem.style.display = 'none';
         elem = document.getElementById("amountOfEntities");
         elem.style.display = 'none';
+        elem = document.getElementById("Instructions");
+        elem.style.display = 'none';
+        gameover = document.getElementById("text");
+        gameover.style.display = 'block';
+        gameover = document.getElementById("ul");
+        gameover.style.display = 'block';
         elem = document.getElementById("score").style.marginTop = "17%"; 
         score.style.marginLeft = "46%";
         score.style.fontSize = "xx-large";
