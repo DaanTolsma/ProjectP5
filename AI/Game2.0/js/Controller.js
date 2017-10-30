@@ -335,11 +335,23 @@ function createScene(){
     light3.position.set(60, 50, 0);
     scene.add( light3 );
 
-    var texture = new THREE.TextureLoader().load("textures/Redcarpet.png");
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(20, 20);
-    var floorMaterial = new THREE.MeshPhongMaterial( { map: texture } );
+    var ceilingTexture = new THREE.TextureLoader().load("textures/Ceiling.png");
+    ceilingTexture.wrapS = THREE.RepeatWrapping;
+    ceilingTexture.wrapT = THREE.RepeatWrapping;
+    ceilingTexture.repeat.set(40, 40);
+    var ceilingMaterial = new THREE.MeshPhongMaterial( { map: ceilingTexture } );
+    ceilingMaterial.shininess = 0.1;
+    var ceiling = new THREE.Mesh( new THREE.PlaneBufferGeometry( 300,
+        300, 2, 2), ceilingMaterial);
+    ceiling.position.y = 60;
+    ceiling.rotation.x = Math.PI / 2;
+    scene.add(ceiling);
+
+    var floorTexture = new THREE.TextureLoader().load("textures/Floor.png");
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(40, 40);
+    var floorMaterial = new THREE.MeshPhongMaterial( { map: floorTexture } );
     floorMaterial.shininess = 0.1;
     var floor = new THREE.Mesh( new THREE.PlaneBufferGeometry( 300,
         300, 2, 2), floorMaterial);
