@@ -137,6 +137,55 @@ body {
   margin-bottom: 10px;
   font-family: Arial;
 }
+#damageboost{
+    background-image: url(../Images/Snack.png);
+    display: block;
+    width: 80px;
+    height: 80px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 20px;  
+}
+#speedboost{
+    background-image: url(../Images/beer.png);
+    display: block;
+    width: 80px;
+    height: 80px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 110px;
+}
+#healthboost{
+    background-image: url(../Images/Coffee.png);
+    display: block;
+    width: 80px;
+    height: 80px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 200px;  
+}
+#healthup{
+    background-image: url(../Images/Energydrink.png);
+    display: block;
+    width: 80px;
+    height: 80px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 290px;
+}
+h3{
+    color: #FB1886;
+    margin-top: 90px;
+    text-align: center;
+}
 .GameOver #score{
     font-size: xx-large;
 }
