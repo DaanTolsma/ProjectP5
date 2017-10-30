@@ -304,6 +304,8 @@ function render() {
     }
     else{
         document.exitPointerLock();
+         document.getElementById("clicktoplay").innerHTML = " ";
+        document.getElementById("instructiontext").innerHTML = " ";
         elem = document.getElementById("GameOver");
         elem.style.display = 'block';
         elem = document.getElementById("cursor");
