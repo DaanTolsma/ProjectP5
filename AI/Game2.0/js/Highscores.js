@@ -6,13 +6,15 @@ var highscores = [["Daan", 499], ["Bauke", 40], ["Sjoerd", 500]];
 
 var limit = 3;
 var name = "";
-var score = 999999;
+var score = 9999;
 
-while (name == "") {
+if (score != null) {
+    while (name == "") {
     getName();
 }
 
 newHighscore(name, score);
+}
 
 document.write('<table align="center">');
 document.write('<tr><th>#</th><th>Naam</th><th>Score</th></tr>');
