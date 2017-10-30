@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <link rel="stylesheet" type="text/css" href="css/StyleSheet.css">
+</head>
+<body>
+    <h1 id="amountOfEntities">Entities: 0</h1>
+    <h2 id="waveAmount">Wave: 0</h2>
+    <h3 id="waveCountDown">Wave starts in:</h3>
+    <div id="HP"></div>
+    <div id="cursor"></div>
+    <progress id="healthbar" value="100" max="100"></progress>
+    <script src='js/three.js'></script>
+    <script src='js/keyboard.js'></script>
+    <script src='js/PointerLockControls.js'></script>
+    <script src='js/Waypoint.js'></script>
+    <script src='js/Wall.js'></script>
+    <script src='js/WorldObjects.js'></script>
+    <script src='js/Collider.js'></script>
+    <script src='js/DamageHandler.js'></script>
+    <script src='js/Entity.js'></script>
+    <script src='js/Player.js'></script>
+    <div id="blocker" style="display: -moz-box;">
+
+			<div id="instructions" style="">
+				<span style="font-size:40px">Click to play</span>
+				<br>
+				(W, A, S, D = Move, SPACE = Jump, MOUSE = Look around, E = Spawn entity)
+			</div>
+
+		</div>
+    <script src='js/Controller.js'></script>
+    <canvas width="1920" height="382" style="width: 1536px; height: 306px;"></canvas>
+</body>
+</html>
+
