@@ -34,6 +34,8 @@ class DamageHandler{
             finaldmg = hpdef;
             newhealth = 0;
             defender.kill();
+            var audio = new Audio('audio/kill.mp3');
+            audio.play();
         }
         defender.setHealth(newhealth);
 
