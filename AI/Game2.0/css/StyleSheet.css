@@ -108,12 +108,109 @@ body {
     text-align: center;
 }
 
-#clicktoplay {
-    display: none;
-    z-index: 5;
-    top: 50%;
-    left: 50%;
-    margin-top: 10%;
-    margin-left: 42%;
-    color: white;
+#instructiontext {
+    font-size: 15px;
 }
+
+#GameOver{
+    height: 60%;
+    overflow: auto;
+    margin: auto;
+    background-image: url('/Images/background.jpg');
+    }
+#text{
+    text-align: center;
+    font-family: Papyrus;
+    font-size: 100px;
+}
+ul{
+    font-family: Arial;
+    list-style-type: none;
+    margin-left: 40%;
+    margin-top: 10%;
+}
+#score {
+  color: #B30D5D;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-align: center;
+  margin-top: 5%;
+  margin-bottom: 10px;
+  font-family: Arial;
+}
+.GameOver #score{
+    font-size: xx-large;
+}
+.button {
+  display: block;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 250px;
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid white;
+  color: white;
+  font-weight: bold;
+  font-size: large;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: #FB1886;
+  background-image: -webkit-linear-gradient(bottom, #808080 0%, #000 100%);
+  background-image:         linear-gradient(to bottom, #808080 0%, #000 100%);
+  border-radius: 5px;
+}
+.button:hover {
+  background-color: #B30D5D;
+  background-image: -webkit-linear-gradient(bottom, #B30D5D 0%, #FB1886 100%);
+  background-image:         linear-gradient(to bottom, #B30D5D 0%, #FB1886 100%);
+}
+
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-100px; opacity:0 } 
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom { 
+  from{ bottom:-100px; opacity:0 } 
+  to{ bottom:0; opacity:1 }
+}
+
+#myDiv {
+  display: none;
+  text-align: center;
+}
+

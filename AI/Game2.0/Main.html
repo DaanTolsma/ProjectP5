@@ -26,70 +26,20 @@
     <script src='js/Arms.js'></script>
     <script src='js/Player.js'></script>
     <div id="blocker" style="display: -moz-box;">
-        <span id="clicktoplay" style="font-size: 40px">Click to play</span>
         <div id="instructions" style="">
-            <br>
-            (W, A, S, D = Move, MOUSE = Look around, E = Pickup weapon, G = Drop weapon, SHIFT = Show instructions)<br>
-            <br> Goal: Surive<br>
+            <span id="clicktoplay" style="font-size: 40px"></span>
+            <pre id="instructiontext">
+            </pre>
         </div>
     </div>
-<style>
-/* Center the loader */
-body{        
-         background-image: url('Images/background.jpg');
-        
-    }
-#loader {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 1;
-  width: 150px;
-  height: 150px;
-  margin: -75px 0 0 -75px;
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-}
-
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Add animation to "page content" */
-.animate-bottom {
-  position: relative;
-  -webkit-animation-name: animatebottom;
-  -webkit-animation-duration: 1s;
-  animation-name: animatebottom;
-  animation-duration: 1s
-}
-
-@-webkit-keyframes animatebottom {
-  from { bottom:-100px; opacity:0 } 
-  to { bottom:0px; opacity:1 }
-}
-
-@keyframes animatebottom { 
-  from{ bottom:-100px; opacity:0 } 
-  to{ bottom:0; opacity:1 }
-}
-
-#myDiv {
-  display: none;
-  text-align: center;
-}
-</style>
+    <div id="GameOver" style="height: 100%;" style="width: 100%;">
+        <h1 id="text">Game Over</h1>
+        <h1 id="score">Score: 0</h1>
+          <ul>
+            <li><a href="Main.html"  style="text-decoration:none;" class="button play">Retry</a></li>
+            <li><a href="TitleScreen.html"  style="text-decoration:none;" class="button play">Back to menu</a></li>
+        </ul>
+    </div>
 </head>
 
 <div id="loader"></div>
@@ -97,15 +47,17 @@ body{
 
 
 <script>
-var myVar;
+    var myVar;
 
-function myFunction() {
-    myVar = setTimeout(showPage, 3000);
-}
+    function myFunction() {
+        myVar = setTimeout(showPage, 2000);
+    }
 
-function showPage() {
-  document.getElementById("loader").style.display = "none";
-}
+    function showPage() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("clicktoplay").innerHTML = "Click to play!";
+        document.getElementById("instructiontext").innerHTML = "(W, A, S, D = Move, MOUSE = Look around, E = Pickup weapon, G = Drop weapon)";
+    }
 </script>
     <script src='js/Controller.js'></script>
     <canvas width="1920" height="382" style="width: 1536px; height: 306px;"></canvas>

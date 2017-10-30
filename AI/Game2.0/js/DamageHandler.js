@@ -1,4 +1,3 @@
-var scorecounter = 0;
 class DamageHandler{
     constructor(){
 
@@ -42,10 +41,6 @@ class DamageHandler{
         var elem = document.getElementById('score');
         elem.innerHTML = "Score: " + scorecounter;
     }
-
-    if(newhealth <= 0 && defender instanceof Player){
-    window.location.replace("GameOver.html");
-}
     }
 
 }

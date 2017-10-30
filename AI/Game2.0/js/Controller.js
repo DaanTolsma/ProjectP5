@@ -25,6 +25,7 @@ var buffs = [];
 var weaponId = 0;
 var buffId = 0;
 var healthbuffindex = 0;
+var scorecounter = 0;
 var weaponPaths = ['models/Book.json','models/Monitor.json','models/Keyboard.json','models/Pointer.json','models/Laptop.json',
     'models/Map.json','models/Broomstick.json','models/Watercanteen.json','models/Trashbin.json','models/Globe.json','models/Tablet.json'];
 var buffPaths = ['models/Sodacan.json','models/Snack.json','models/Beer.json','models/Coffee.json'];
@@ -93,8 +94,6 @@ if ( havePointerLock ) {
 
         var elem = document.getElementById("cursor");
         elem.style.display = 'block';
-        elem = document.getElementById("clicktoplay");
-        elem.style.display = 'none';
         elem = document.getElementById("HP");
         elem.style.display = 'block';
         elem = document.getElementById("healthbar");
@@ -104,6 +103,8 @@ if ( havePointerLock ) {
         elem = document.getElementById("score");
         elem.style.display = 'block';
         instructions.style.display = 'none';
+        elem = document.getElementById("GameOver");
+        elem.style.display = 'none';
         // Ask the browser to lock the pointer
         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
         element.requestPointerLock();
@@ -120,8 +121,6 @@ init();
 
 setTimeout(function(){
     render();
-    var elem = document.getElementById("clicktoplay");
-    elem.style.display = 'block';
 }, 2000);
 
 var controlsEnabled = false;
@@ -237,6 +236,7 @@ function onWindowResize() {
 }
 
 function render() {
+    if(player.isDeath == false){
 
     requestAnimationFrame( render );
 
@@ -297,7 +297,25 @@ function render() {
         handleItemSpawnpoints();
     }
     renderer.render( scene, camera );
-
+    }
+    else{
+        controls.enabled = false;
+        controlsEnabled = false;
+        elem = document.getElementById("GameOver");
+        elem.style.display = 'block';
+        elem = document.getElementById("cursor");
+        elem.style.display = 'none';
+        elem = document.getElementById("HP");
+        elem.style.display = 'none';
+        elem = document.getElementById("healthbar");
+        elem.style.display = 'none';
+        elem = document.getElementById("amountOfEntities");
+        elem.style.display = 'none';
+        elem = document.getElementById("score").style.marginTop = "17%"; 
+        score.style.marginLeft = "46%";
+        score.style.fontSize = "xx-large";
+        elem.style.display = 'block';
+    }
 }
 
 function createScene(){

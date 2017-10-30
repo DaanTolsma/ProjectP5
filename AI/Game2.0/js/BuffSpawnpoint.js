@@ -34,6 +34,9 @@ class BuffSpawnpoint {
             if(pos.distanceTo(playerpos) <= 1.5 && framecounter > 5){
                 if(this.buff.getHpBoost != 0 && player.getHpBoost == 0 && this.buff != null){
                     player.setHpBoost(this.buff.getHpBoost,this.buff.getDuration);
+                    scorecounter += 50;
+                    var elem = document.getElementById('score');
+                    elem.innerHTML = "Score: " + scorecounter;
                     this.buff.removeBuff();
                     this.buff = null;
                 }
