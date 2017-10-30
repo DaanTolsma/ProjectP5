@@ -1,12 +1,13 @@
 body {
   background-image: url('/Images/background.jpg');
-  
 }
+
 #main {
   height: 60%;
   overflow: auto;
   margin: auto;
 }
+
 #main h1 {
   color: #B30D5D;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;

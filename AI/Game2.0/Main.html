@@ -5,8 +5,9 @@
     <title>Test</title>
     <link rel="stylesheet" type="text/css" href="css/StyleSheet.css">
 </head>
-<body>
+<body onload="myFunction()" style="margin:0;">
     <h1 id="amountOfEntities">Entities: 0</h1>
+    <h1 id="score">Score: 0</h1>
     <h2 id="pickup"></h2>
     <div id="HP"></div>
     <div id="cursor"></div>
@@ -25,14 +26,87 @@
     <script src='js/Arms.js'></script>
     <script src='js/Player.js'></script>
     <div id="blocker" style="display: -moz-box;">
+        <span id="clicktoplay" style="font-size: 40px">Click to play</span>
+        <div id="instructions" style="">
+            <br>
+            (W, A, S, D = Move, MOUSE = Look around, E = Pickup weapon, G = Drop weapon, SHIFT = Show instructions)<br>
+            <br> Goal: Surive<br>
+        </div>
+    </div>
+<style>
+/* Center the loader */
+body{        
+         background-image: url('Images/background.jpg');
+        
+    }
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
 
-			<div id="instructions" style="">
-				<span style="font-size:40px">Click to play</span>
-				<br>
-				(W, A, S, D = Move, SPACE = Jump, MOUSE = Look around, E = Spawn entity)
-			</div>
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
 
-		</div>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-100px; opacity:0 } 
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom { 
+  from{ bottom:-100px; opacity:0 } 
+  to{ bottom:0; opacity:1 }
+}
+
+#myDiv {
+  display: none;
+  text-align: center;
+}
+</style>
+</head>
+
+<div id="loader"></div>
+
+
+
+<script>
+var myVar;
+
+function myFunction() {
+    myVar = setTimeout(showPage, 3000);
+}
+
+function showPage() {
+  document.getElementById("loader").style.display = "none";
+}
+</script>
     <script src='js/Controller.js'></script>
     <canvas width="1920" height="382" style="width: 1536px; height: 306px;"></canvas>
 </body>

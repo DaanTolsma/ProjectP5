@@ -18,13 +18,23 @@ body {
     font-size: 20px;
     margin-top: 40px;
     margin-left: 10px;
+    display: none;
+}
+#score {
+    position:absolute;
+    z-index:5;
+    color: white;
+    font-size: 20px;
+    margin-top: 60px;
+    margin-left: 10px;
+    display: none;
 }
 
 #blocker {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    
 }
 
 #instructions {
@@ -52,6 +62,7 @@ body {
     z-index:5;
     margin-top: 20px;
     margin-left: 40px;
+    display: none;
 }
 
 #HP {
@@ -66,6 +77,7 @@ body {
     background-repeat: no-repeat;
     background-attachment: scroll;
     background-size: 20px 20px;
+    display: none;
 }
 
 #cursor {
@@ -83,6 +95,7 @@ body {
     background-attachment: scroll;
     background-size: 20px 20px;
     box-align: center;
+    display: none;
 }
 
 #pickup {
@@ -95,3 +108,12 @@ body {
     text-align: center;
 }
 
+#clicktoplay {
+    display: none;
+    z-index: 5;
+    top: 50%;
+    left: 50%;
+    margin-top: 10%;
+    margin-left: 42%;
+    color: white;
+}

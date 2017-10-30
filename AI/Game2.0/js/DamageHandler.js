@@ -1,3 +1,4 @@
+var scorecounter = 0;
 class DamageHandler{
     constructor(){
 
@@ -30,9 +31,21 @@ class DamageHandler{
             attacker.weapon.setDur();
         }
         if(newhealth <= 0){
+            finaldmg = hpdef;
             newhealth = 0;
             defender.kill();
         }
         defender.setHealth(newhealth);
+
+    if(attacker instanceof Player){
+        scorecounter += finaldmg;
+        var elem = document.getElementById('score');
+        elem.innerHTML = "Score: " + scorecounter;
     }
+
+    if(newhealth <= 0 && defender instanceof Player){
+    window.location.replace("GameOver.html");
+}
+    }
+
 }

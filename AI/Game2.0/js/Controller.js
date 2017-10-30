@@ -91,6 +91,18 @@ if ( havePointerLock ) {
 
     instructions.addEventListener( 'click', function ( event ) {
 
+        var elem = document.getElementById("cursor");
+        elem.style.display = 'block';
+        elem = document.getElementById("clicktoplay");
+        elem.style.display = 'none';
+        elem = document.getElementById("HP");
+        elem.style.display = 'block';
+        elem = document.getElementById("healthbar");
+        elem.style.display = 'block';
+        elem = document.getElementById("amountOfEntities");
+        elem.style.display = 'block';
+        elem = document.getElementById("score");
+        elem.style.display = 'block';
         instructions.style.display = 'none';
         // Ask the browser to lock the pointer
         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
@@ -108,6 +120,8 @@ init();
 
 setTimeout(function(){
     render();
+    var elem = document.getElementById("clicktoplay");
+    elem.style.display = 'block';
 }, 2000);
 
 var controlsEnabled = false;
