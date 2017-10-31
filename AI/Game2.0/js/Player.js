@@ -122,10 +122,56 @@ class Player {
             var cooldown = this.basecooldown;
             if(this.weapon == null){
                 arms.Animation("punch");
+                var audio = new Audio('audio/hit-fist.mp3');
+                audio.play();
             }
             else{
                 arms.Animation("weapon");
                 cooldown += this.weapon.getSpeed;
+                if(this.weapon.name == "Globe"){
+                    var audio = new Audio('audio/hit-globe.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Keyboard"){
+                    var audio = new Audio('audio/hit-keyboard.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Laptop"){
+                    var audio = new Audio('audio/hit-laptop.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Map"){
+                    var audio = new Audio('audio/hit-map.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Monitor"){
+                    var audio = new Audio('audio/hit-monitor.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Pointer"){
+                    var audio = new Audio('audio/hit-pointer.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Trashbin"){
+                    var audio = new Audio('audio/hit-trashbin.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Tablet"){
+                    var audio = new Audio('audio/hit-tablet.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Watercanteen"){
+                    var audio = new Audio('audio/hit-water.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Mathematics Book"){
+                    var audio = new Audio('audio/hit-book.mp3');
+                    audio.play();
+                }
+                if(this.weapon.name == "Broomstick"){
+                    var audio = new Audio('audio/hit-broom.mp3');
+                    audio.play();
+                }
             }
             attackAllowed = false;
             setTimeout(function(){
@@ -157,7 +203,6 @@ class Player {
                 drop.setDecay(true,countG);
             }
         }
-
         if(this.dmgboost > 0 && !dmgcount){
             dmgcount = true;
             setTimeout(function(){
@@ -183,10 +228,14 @@ class Player {
         if(stopdmgboost){
             this.dmgboost = 0;
             stopdmgboost = false;
+            var showbuff = document.getElementById('damageboost');
+            showbuff.style.display = 'none';
         }
         if(stopspeedboost){
             this.speedboost = 0;
             stopspeedboost = false;
+            var showbuff = document.getElementById('speedboost');
+            showbuff.style.display = 'none';
         }
         if(stophpboost){
             this.maxHealth -= this.hpboost;
@@ -196,6 +245,8 @@ class Player {
 
             this.hpboost = 0;
             stophpboost = false;
+            var showbuff = document.getElementById('healthboost');
+            showbuff.style.display = 'none';
         }
         this.checkPickupWeapon();
     }
@@ -259,6 +310,8 @@ class Player {
                             weaponSpawnpoints[i].setWeapon(null);
                         }
                     }
+                    var audio = new Audio('audio/pickup-weapon.mp3');
+                    audio.play();
                     framecounter = 0;
                 }
             }

@@ -19,15 +19,7 @@ body {
     margin-top: 40px;
     margin-left: 10px;
     display: none;
-}
-#score {
-    position:absolute;
-    z-index:5;
-    color: white;
-    font-size: 20px;
-    margin-top: 60px;
-    margin-left: 10px;
-    display: none;
+    color: darkblue;
 }
 
 #blocker {
@@ -80,6 +72,10 @@ body {
     display: none;
 }
 
+#clicktoplay {
+    color: darkblue;
+}
+
 #cursor {
     position:absolute;
     z-index:5;
@@ -110,13 +106,14 @@ body {
 
 #instructiontext {
     font-size: 15px;
+    color: darkblue;
 }
 
 #GameOver{
     height: 60%;
     overflow: auto;
     margin: auto;
-    background-image: url('/Images/background.jpg');
+    background-image: url('../Images/background.jpg');
     }
 #text{
     text-align: center;
@@ -130,16 +127,24 @@ body {
     margin-top: 10%;
 }
 #score {
-  color: #B30D5D;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  text-align: center;
-  margin-top: 5%;
-  margin-bottom: 10px;
-  font-family: Arial;
+      position: absolute;
+      color: #B30D5D;
+      z-index: 5;
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      text-align: center;
+      margin-top: 5%;
+      margin-bottom: 10px;
+      font-family: Arial;
+    font-size: 20px;
+    margin-left: 10px;
+    display: none;
 }
 #damageboost{
     background-image: url(../Images/Snack.png);
-    display: block;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    display: none;
     width: 80px;
     height: 80px;
     position: fixed;
@@ -150,7 +155,10 @@ body {
 }
 #speedboost{
     background-image: url(../Images/beer.png);
-    display: block;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    display: none;
     width: 80px;
     height: 80px;
     position: fixed;
@@ -161,7 +169,10 @@ body {
 }
 #healthboost{
     background-image: url(../Images/Coffee.png);
-    display: block;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    display: none;
     width: 80px;
     height: 80px;
     position: fixed;
@@ -172,7 +183,10 @@ body {
 }
 #healthup{
     background-image: url(../Images/Energydrink.png);
-    display: block;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    display: none;
     width: 80px;
     height: 80px;
     position: fixed;

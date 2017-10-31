@@ -35,6 +35,9 @@ var weaponMeshes = [];
 var buffMeshes = [];
 var weaponmeshcounter = 0;
 var buffmeshcounter = 0;
+var listener = new THREE.AudioListener();
+var sound = new THREE.Audio( listener );
+var audioLoader = new THREE.AudioLoader();
 
 var blocker = document.getElementById( 'blocker' );
 var instructions = document.getElementById( 'instructions' );
@@ -95,23 +98,27 @@ if ( havePointerLock ) {
     document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
 
     instructions.addEventListener( 'click', function ( event ) {
-
-        var elem = document.getElementById("cursor");
-        elem.style.display = 'block';
-        elem = document.getElementById("HP");
-        elem.style.display = 'block';
-        elem = document.getElementById("healthbar");
-        elem.style.display = 'block';
-        elem = document.getElementById("amountOfEntities");
-        elem.style.display = 'block';
-        elem = document.getElementById("score");
-        elem.style.display = 'block';
-        instructions.style.display = 'none';
-        elem = document.getElementById("GameOver");
-        elem.style.display = 'none';
-        // Ask the browser to lock the pointer
-        element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-        element.requestPointerLock();
+        if(player.isDeath){
+            return false;
+        }
+        else{
+            var elem = document.getElementById("cursor");
+            elem.style.display = 'block';
+            elem = document.getElementById("HP");
+            elem.style.display = 'block';
+            elem = document.getElementById("healthbar");
+            elem.style.display = 'block';
+            elem = document.getElementById("amountOfEntities");
+            elem.style.display = 'block';
+            elem = document.getElementById("score");
+            elem.style.display = 'block';
+            instructions.style.display = 'none';
+            elem = document.getElementById("GameOver");
+            elem.style.display = 'none';
+            // Ask the browser to lock the pointer
+            element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+            element.requestPointerLock();
+        }
 
     }, false );
 
@@ -141,6 +148,7 @@ var velocity = new THREE.Vector3();
 function init() {
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     scene = new THREE.Scene();
+    camera.add( listener );
 
     controls = new THREE.PointerLockControls( camera );
     player = new Player(controls.getObject(), 20, 10, 1, 2.5, 100, 6, 20, 800,4,4);
@@ -242,71 +250,71 @@ function onWindowResize() {
 function render() {
     if(player.isDeath == false){
 
-    requestAnimationFrame( render );
+        requestAnimationFrame( render );
 
-    if(modelsReady){
-        addArms(0,20);
-        modelsReady = false;
-    }
-
-    var speedboost = 1;
-    if(player != null){
-        speedboost += player.getSpeedBoost;
-    }
-
-    if ( controlsEnabled ) {
-
-        var time = performance.now();
-        var delta = ( time - prevTime ) / 1000;
-
-        velocity.x -= velocity.x * 10.0 * delta;
-        velocity.z -= velocity.z * 10.0 * delta;
-
-        velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
-
-        if ( moveForward ) velocity.z -= (200.0 * speedboost) * delta;
-        if ( moveBackward ) velocity.z += (200.0 * speedboost) * delta;
-
-        if ( moveLeft ) velocity.x -= (200.0 * speedboost) * delta;
-        if ( moveRight ) velocity.x += (200.0 * speedboost) * delta;
-
-        controls.getObject().translateX( velocity.x * delta );
-        controls.getObject().translateY( velocity.y * delta );
-        controls.getObject().translateZ( velocity.z * delta );
-
-        if ( controls.getObject().position.y < 5 ) {
-
-            velocity.y = 0;
-            controls.getObject().position.y = 5;
-
-            canJump = true;
-
+        if(modelsReady){
+            addArms(0,20);
+            modelsReady = false;
         }
 
-        prevTime = time;
-
-    }
-    var deltaTime = timer.getDelta();
-    window.onkeydown = function(e) {
-        return !(e.keyCode == 32);
-    };
-    if(!player.isDeath){
-        if(arms != null){
-            player.updatePlayer(entitiesGroup,damageHandler,entities,arms);
-            arms.updateArms(deltaTime);
+        var speedboost = 1;
+        if(player != null){
+            speedboost += player.getSpeedBoost;
         }
-    }
-    AIMovement(deltaTime);
-    if(player != null){
-        handleItemSpawnpoints();
-    }
-    renderer.render( scene, camera );
+
+        if ( controlsEnabled ) {
+
+            var time = performance.now();
+            var delta = ( time - prevTime ) / 1000;
+
+            velocity.x -= velocity.x * 10.0 * delta;
+            velocity.z -= velocity.z * 10.0 * delta;
+
+            velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+
+            if ( moveForward ) velocity.z -= (200.0 * speedboost) * delta;
+            if ( moveBackward ) velocity.z += (200.0 * speedboost) * delta;
+
+            if ( moveLeft ) velocity.x -= (200.0 * speedboost) * delta;
+            if ( moveRight ) velocity.x += (200.0 * speedboost) * delta;
+
+            controls.getObject().translateX( velocity.x * delta );
+            controls.getObject().translateY( velocity.y * delta );
+            controls.getObject().translateZ( velocity.z * delta );
+
+            if ( controls.getObject().position.y < 5 ) {
+
+                velocity.y = 0;
+                controls.getObject().position.y = 5;
+
+                canJump = true;
+
+            }
+
+            prevTime = time;
+
+        }
+        var deltaTime = timer.getDelta();
+        window.onkeydown = function(e) {
+            return !(e.keyCode == 32);
+        };
+        if(!player.isDeath){
+            if(arms != null){
+                player.updatePlayer(entitiesGroup,damageHandler,entities,arms);
+                arms.updateArms(deltaTime);
+            }
+        }
+        AIMovement(deltaTime);
+        if(player != null){
+            handleItemSpawnpoints();
+        }
+        renderer.render( scene, camera );
     }
     else{
         document.exitPointerLock();
-         document.getElementById("clicktoplay").innerHTML = " ";
+        document.getElementById("clicktoplay").innerHTML = " ";
         document.getElementById("instructiontext").innerHTML = " ";
-        elem = document.getElementById("GameOver");
+        var elem = document.getElementById("GameOver");
         elem.style.display = 'block';
         elem = document.getElementById("cursor");
         elem.style.display = 'none';
@@ -316,8 +324,10 @@ function render() {
         elem.style.display = 'none';
         elem = document.getElementById("amountOfEntities");
         elem.style.display = 'none';
-        elem = document.getElementById("Instructions");
-        elem.style.display = 'none';
+        elem = document.getElementById('instructions');
+        elem.parentNode.removeChild(elem);
+        elem = document.getElementById('blocker');
+        elem.parentNode.removeChild(elem);
         gameover = document.getElementById("text");
         gameover.style.display = 'block';
         gameover = document.getElementById("ul");
@@ -325,7 +335,8 @@ function render() {
         elem = document.getElementById("score").style.marginTop = "17%"; 
         score.style.marginLeft = "46%";
         score.style.fontSize = "xx-large";
-        elem.style.display = 'block';
+        var audio = new Audio('audio/gameover.mp3');
+        audio.play();
     }
 }
 

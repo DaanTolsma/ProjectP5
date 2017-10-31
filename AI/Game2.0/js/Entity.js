@@ -92,6 +92,8 @@ class Entity {
         }
         else if(type == "punch"){
             this.punch.play();
+            var audio = new Audio('audio/hit-fist.mp3');
+            audio.play();
         }
         if(type == "" && this.run.isRunning()){
             this.run.stop();

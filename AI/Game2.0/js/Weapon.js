@@ -50,6 +50,8 @@ class Weapon {
         this.dur -= 1;
         if(this.dur <= 0){
             this.destroyed = true;
+            var audio = new Audio('audio/break.mp3');
+            audio.play();
         }
     }
 
